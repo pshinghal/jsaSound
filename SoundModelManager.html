@@ -1,0 +1,94 @@
+<html>
+<head>
+ <!-- ---------------------------------------------------------------------------
+This code demonstrates 
+	a) Using a dynamically created list selector to choose sound models,
+	b) a dynamically created "Player" to display sliders for sound model parameters
+------------------------------------------------------------------------------- -->   
+
+	<!-- #include files for the sound models -->
+	<script src="aswAudioComponents/aswAudioComponents.js"></script>
+	<script src="utils/utils.js"></script>
+	<!-- -->
+	
+	<!-- list of sound models to incude -->
+    <script src="aswSoundModels/OscTest9.js"></script>
+	<script src="aswSoundModels/myFM1.js"></script>
+	<script src="aswSoundModels/noisyFM.js"></script>
+	<script src="aswSoundModels/MetaDrone1.js"></script>
+	<script src="aswSoundModels/filteredNoiseBand.js"></script>
+	<script src="aswSoundModels/MetaDrone2.js"></script>
+	<script src="aswSoundModels/ToneTick.js"></script>
+	<script src="aswSoundModels/NoiseTick.js"></script>
+	<script src="aswSoundModels/SimpleNoiseTick2.js"></script>
+	<script src="aswSoundModels/PeriodicTrigger2.js"></script>
+	<script src="aswSoundModels/Mp3.js"></script>
+	<!-- -->
+	
+	<!--  "Player" code -->
+	<script src="aswAudioComponents/sliderBox.js"></script>
+	
+	<!--Sound loading and management code-->
+	<script type="text/javascript">	
+		var currentSndModel;
+
+		window.addEventListener("load", eventWindowLoaded, false);
+
+		function eventWindowLoaded () {
+
+			console.log("Window Loaded");
+			// create the sound selector box for the web page
+			makeSoundListSelector();
+		}				
+		
+		// Names are arbitrary, makers must be defined in the "#include"ed sound model files above
+		soundList = [{},
+					 {name: "Square Wave", maker: oscFactory},
+					 {name: "Classic FM", maker: aswFMFactory},
+					 {name: "Noisy FM", maker: aswNoisyFMFactory},
+					 {name: "UglyMetadrone", maker: aswMetaDrone1Factory},
+					 {name: "Noise Band", maker: aswfilteredNoiseBandFactory},
+					 {name: "Metadrone2", maker: aswMetaDrone2Factory},
+					 {name: "ToneTick", maker: aswToneTickFactory},
+					 {name: "NoiseTick", maker: aswNoiseTickFactory},
+					 {name: "Simple Noise Tick 2", maker: aswSimpleNoiseTickFactory2},
+					 {name: "Period Trigger 2", maker: aswPeriodicTriggerFactory2},
+					 {name: "mp3 Schumann", maker: mp3Factory}
+					 ]
+		
+		// Create the html select box using the hard-coded soundList above		
+		function makeSoundListSelector(){
+			var select = document.getElementById("soundList");
+			var foo;
+			for (var i=0; i< soundList.length;i++){
+				foo = soundList[i].name;
+				if (soundList[i].name){
+					select.options[select.options.length] = new Option(soundList[i].name);
+				} else{
+					select.options[select.options.length] = new Option();
+				}					
+			}
+		}
+		
+		// responde to sound selections be loading a sound as the current model
+		function soundChoice() {
+			var sb;
+			var mylist=document.getElementById("soundList");
+			currentSndModel=soundList[mylist.selectedIndex].maker();  
+			sb = makeSliderBox(currentSndModel);
+			console.log("slider box is " + sb + " + and model is " + currentSndModel);
+		}		
+	</script>
+</head>
+<body>
+<h1> Dynamically create model gui with sliders and text boxes for parameters </h1> 
+
+<!-- Here we will dnamically create the sound list for selection -->
+Choose your sound model:
+<select id="soundList" onchange="soundChoice()">
+</select> </br>
+<!-- ---------------------------------------------------------------------------------------- -->
+
+
+</body>
+</html>
