@@ -31,11 +31,18 @@ var baseSM = function(){
 	var bsmInterface = {};
 	
 	// This cannot be "private" because the inhereters need it - too bad it cannot be hidden from the users!!
-	bsmInterface.registerParam = function(i_name,i_min,i_max, i_val, i_f){
-		var a=[];
-		a = [i_name,i_min,i_max,i_val, i_f];
+	// i_name = String
+	// i_val = Object of values
+	// i_f = function
+	bsmInterface.registerParam = function(i_name, i_type, i_val, i_f){
+		var a={
+			"name": i_name,
+			"type": i_type,
+			"value": i_val,
+			"f": i_f
+		};
 		//console.log("array of args is " + a.prettyString());
-		paramList[paramList.length]=[i_name,i_min,i_max,i_val, i_f];
+		paramList[paramList.length]=a;
 		return i_f;
 	}
 	
@@ -43,13 +50,14 @@ var baseSM = function(){
 			return paramList;			
 	}
 	
-	// A "generic" way to set parameters, identifying them with their index on the paramList, and using a [0,1] normalized value range
-	bsmInterface.setParamNorm = function(i_pID, i_val){
-		if (i_pID < paramList.length){	
-			p=paramList[i_pID];
-			p[4](p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
-		}
-	}
+//FIND A NEW WAY TO DO THIS!!!
+//	// A "generic" way to set parameters, identifying them with their index on the paramList, and using a [0,1] normalized value range
+//	bsmInterface.setParamNorm = function(i_pID, i_val){
+//		if (i_pID < paramList.length){	
+//			p=paramList[i_pID];
+//			p[4](p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
+//		}
+//	}
 	
 	// all sound models need to have these methods
 	bsmInterface.play = function(){

@@ -16,7 +16,7 @@ It creates a new window for a "player" GUI with sliders and text boxes to show v
 function makeSliderBox(i_sm){  // argument is a sound model 
 	var i;
 	var val;
-	var sliderID, textID;
+	var controllerID, textID;
 	var sliderelmt; // temp variable for shorhand
 	var playingP=false;
 	
@@ -52,45 +52,65 @@ function makeSliderBox(i_sm){  // argument is a sound model
 		
 	// Now set up the parameters
 	for (i=0;i<params.length; i++){
-		myWindow.document.write(" <p> " + params[i][0] + "</p> ");
+		myWindow.document.write(" <p> " + params[i].name + "</p> ");
 		// create IDs to be used for change listener callbacks removing spaces in multi-word names 
-		sliderID = params[i][0].replace(/\s+/g, '') + "_sliderID";
-		textID   = params[i][0].replace(/\s+/g, '') + "_textID";
-		
-		val = Math.max(Math.min(params[i][2], params[i][3]), params[i][1]);
-		
-		// Generate slider GUI code: ----------------------
-		// Output will look like this: <input id="foo_sliderID" type="range" min="0" max="1" step="0.01" value="0.1" style="width: 300px; height: 20px;" />
-		myWindow.document.write("<input id=\"" + sliderID + "\" type=\"range\" min=" + parseFloat(params[i][1]) + " max="+ parseFloat(params[i][2]) + " step=\"0.01\" value=" + parseFloat(val) +" style=\"width: 300px; height: 20px;\" />");		
-		// Output will look like this: <input id="bar_textID" type="text" disabled="disabled" name="textfield" size=4 /> <br />
-		myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
-		//  -----------------------------------------------
-
-		
-		// for each slider/text field pair, set up a callback to change the text field when the slider moves.
-		// WARNING: COOL AND PROPERLY-WRITTEN CLOSURE CODE AHEAD ...
-		sliderelmt = myWindow.document.getElementById(sliderID);
+		controllerID = params[i].name.replace(/\s+/g, '') + "_controllerID";
+		textID   = params[i].name.replace(/\s+/g, '') + "_textID";
 		
 
-		sliderelmt.change = function(i_textID, paramfunc) {  // factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
+		if (params[i].type === "range") {
+
+			val = Math.max(Math.min(params[i].value.max, params[i].value.val), params[i].value.min);
+			
+			// Generate slider GUI code: ----------------------
+			// Output will look like this: <input id="foo_controllerID" type="range" min="0" max="1" step="0.01" value="0.1" style="width: 300px; height: 20px;" />	
+			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"range\" min=" + parseFloat(params[i].value.min) + " max="+ parseFloat(params[i].value.max) + " step=\"0.01\" value=" + parseFloat(val) +" style=\"width: 300px; height: 20px;\" />");	
+			// Output will look like this: <input id="bar_textID" type="text" disabled="disabled" name="textfield" size=4 /> <br />
+			myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
+			//  -----------------------------------------------
+	
+			
+			// for each slider/text field pair, set up a callback to change the text field when the slider moves.
+			// WARNING: COOL AND PROPERLY-WRITTEN CLOSURE CODE AHEAD ...
+			sliderelmt = myWindow.document.getElementById(controllerID);
+			
+	
+			sliderelmt.change = function(i_textID, paramfunc) {  // factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
 				var cb = function(){ 
-							var sval = parseFloat(this.value);
-							// ---------------  call the setParameter function of the sm
-							paramfunc(sval); // jsbug - w/o parseFloat, when values are whole numbers, they can get passed as strings!!
-							//console.log("about to set the text field " + i_textID + " to " + sval); // executes during callback
-							myWindow.document.getElementById(i_textID).value = sval;
-						}
+					var sval = parseFloat(this.value);
+					// ---------------  call the setParameter function of the sm
+					paramfunc(sval); // jsbug - w/o parseFloat, when values are whole numbers, they can get passed as strings!!
+					//console.log("about to set the text field " + i_textID + " to " + sval); // executes during callback
+					myWindow.document.getElementById(i_textID).value = sval;
+				}
 				//console.log("returning the function to be passed to the event listener, " + cb); // executes during set-up of the callback
 				return cb;
-			}(textID, params[i][4]) ;
+			}(textID, params[i].f) ;
 			
-		sliderelmt.addEventListener('change', sliderelmt.change);
-
-		// Store the min and max value of the parameters so that we can properly set the sliders from normalized control message values
-		// We dont need the default value or store a function to call - thus the two nulls
-		myInterface.registerParam(sliderelmt, params[i][1], params[i][2], null, null);		
-	} // end for each parameter loop
+			sliderelmt.addEventListener('change', sliderelmt.change);
 	
+			// Store the min and max value of the parameters so that we can properly set the sliders from normalized control message values
+			// We dont need the default value or store a function to call - thus the two nulls
+			myInterface.registerParam(
+				sliderelmt,
+				"range",
+				{
+					"min": params[i].value.min,
+					"max": params[i].value.max,
+					"val": null
+				},
+				null
+			);
+		} else if (params[i].type === "url") {
+			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"url\" value=\"Enter URL here\" style=\"width: 300px; height: 20px;\" />");
+			//NOT IMPLEMENTING ATTACHED TEXT FIELD
+			//...yet
+
+			//NOT IMPLEMENTING THAT registerParam thing either
+			//...again, yet
+		}
+	} // end for each parameter loop
+		
 	// Turn off sounds if window is closed
 	myWindow.onbeforeunload = confirmExit;
 	function confirmExit(){
@@ -112,16 +132,17 @@ function makeSliderBox(i_sm){  // argument is a sound model
 	myInterface.release = function(){
 		myWindow.document.getElementById("playbutton_ID").click(); void 0;
 	};
-	
-	myInterface.setParamNorm = function(i_pID, i_val){
-		var p;
-		var plist = myInterface.getParamList();
-		if (i_pID < plist.length){	
-			p=plist[i_pID];		
-			p[0].value=(p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
-			p[0].change(); // triggers the 
-		}
-	}
+
+//FIND A NEW WAY TO DO THIS!!!
+//	myInterface.setParamNorm = function(i_pID, i_val){
+//		var p;
+//		var plist = myInterface.getParamList();
+//		if (i_pID < plist.length){	
+//			p=plist[i_pID];		
+//			p[0].value=(p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
+//			p[0].change(); // triggers the 
+//		}
+//	}
 	
 	return myInterface;
 		
