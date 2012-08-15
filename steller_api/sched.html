@@ -1,0 +1,126 @@
+<script src="steller.js"></script>
+<script src="sample-manager.js"></script>
+<span id="rate"></span>
+<script>
+    function main(window, SampleManager, Scheduler, Parameterize, GraphNode) {
+        var options = {};
+        SampleManager.init(20, {
+            didInitialize: function () {
+                SampleManager.loadSampleSet('bongos', '../drum-samples/Bongos', {
+                    didFinishLoadingSampleSet: function (name, sampleSet) {
+                        console.log("Sample set " + name + " loaded.");
+                        start(options.audioContext, sampleSet);
+                    }
+                });
+            }
+        }, options);
+
+        function start(audioContext, samples) {
+            // Create and start a scheduler.
+            var sh = new Scheduler(audioContext);
+            sh.running = true;
+
+            // Make a new "bongo" model, connect it
+            // to the destination and play it.
+            var bongos = new BongoModel(sh, samples);
+            bongos.connect(audioContext.destination);
+            bongos.gain.value = 0.5;
+            bongos.play();
+        }
+
+        // A sound model is a sig-proc graph with parameters.
+        // Usually you'd also want a play() function, but that
+        // might do different things in different models anyway,
+        // so we leave that open.
+        function SoundModel(obj, inputs, outputs) {
+            return Parameterize(GraphNode(obj, inputs, outputs));
+        }
+
+        // The "bongo model" plays an accelerando-decelerando
+        // loop of a simple two stroke pattern.
+        function BongoModel(sh, bongos) {
+            // sh is the scheduler.
+            var context = sh.audioContext;
+
+            // Create the model's output nodes.
+            var output = context.createGainNode();
+
+            // Setup the model's basic properties -
+            // 1. It has parameters
+            // 2. It is a node graph
+            var model = SoundModel(this, [], [output]);
+            console.assert(model === this);
+
+            // Returns a scheduler task for doing a single drum hit.
+            function hit(drum) {
+                return function (sched, clock, next) {
+                    var source = context.createBufferSource();
+                    source.buffer = bongos[drum];
+                    source.connect(output);
+                    source.gain.value = 0.5;
+                    source.noteOn(clock.t1);
+
+                    // Drum hits take zero duration. So
+                    // move on to the next thing immediately.
+                    next(sched, clock, sched.stop);
+                };
+            }
+            
+            // Internal parameter that is animated.
+            var p = Parameterize({});
+            p.params.define({name: 'rate', min: 0.01, max: 1000, value: 1});
+
+            // Display the rate value as it changes.
+            var rateDisplay = document.getElementById('rate');
+            function dec2(v) { return Math.round(v * 100) / 100; }
+            p.params.watch('rate', function (val) { rateDisplay.innerText = 'Rate factor: ' + dec2(val); });
+
+            // Make the basic drum loop.
+            var fizzbuzz = sh.loop(sh.track(
+                hit('kick'), sh.delay(2),
+                hit('hihat'), sh.delay(2)
+            ));
+
+            // Define a model parameter to control the extent of
+            // speedups.
+            model.params.define({name: 'speedUpExtent', min: 0, max: 1, value: 0.9});
+
+            // Also add an output gain control parameter.
+            model.params.define({name: 'gain', min: 0, max: 1, audioParam: output.gain});
+
+            // Animate fizzbuzz's p.dur parameter over 40 secs
+            // to speed up and then slow down using an exponential
+            // duration animation curve. Notice that the animation
+            // is itself running in a loop. Do a different rate
+            // animation for the two fizzbuzzes.
+            var speedUpDown = sh.anim(p.rate, 40, function (t) {
+                return Math.pow(2, model.speedUpExtent.value * 12 * Math.min(t, 1-t));
+            });
+
+            // The drum hits and speed up/slow down both run "in parallel".
+            var proc = sh.spawn(
+                sh.track(sh.rate(p.rate), fizzbuzz), 
+                sh.loop(speedUpDown)
+            );
+
+            // Exported play function.
+            model.play = function () {
+                sh.play(proc);
+            };
+
+            // TODO: Stopping a model needs to be engineered to be smooth
+            // and I'm omitting that from the demo. I don't think you'd ever
+            // want a high level model's output to abruptly end. It will probably
+            // have to end at some meaningful time. So I'm not sure whether a
+            // generic mechanism will suffice.
+
+            return model;
+        }
+    }
+
+    main( window
+        , org.anclab.steller.SampleManager
+        , org.anclab.steller.Scheduler
+        , org.anclab.steller.Parameterize
+        , org.anclab.steller.GraphNode);
+</script>
