@@ -1,0 +1,109 @@
+<script src="steller.js"></script>
+<script src="sample-manager.js"></script>
+<script>
+    function main(window, SampleManager, Scheduler, Parameterize, GraphNode) {
+        var options = {};
+        SampleManager.init(20, {
+            didInitialize: function () {
+                window.noise = start(PeriodicNoiseTick, options.audioContext);
+                // Store in global so that we can play with it on the command line.
+            }
+        }, options);
+
+        function start(Model, audioContext) {
+            // Create and start a scheduler.
+            var sh = new Scheduler(audioContext);
+            sh.running = true;
+
+            // Make a new "noise" model, connect it
+            // to the destination and play it.
+            var model = new Model(sh);
+            model.connect(audioContext.destination);
+            sh.play(model.proc);
+
+            return model;
+        }
+
+        // A sound model is a sig-proc graph with parameters.
+        // Usually you'd also want a play() function, but that
+        // might do different things in different models anyway,
+        // so we leave that open.
+        function SoundModel(obj, inputs, outputs) {
+            return Parameterize(GraphNode(obj, inputs, outputs));
+        }
+
+        // Repeats the "SimpleNoiseTick" model.
+        function PeriodicNoiseTick(sh) {
+            var noise = new SimpleNoiseTick(sh);
+
+            // FIXME: Fix this temp workaround for bug where if the duration
+            // of a delay (or anim) is 0.0, then the callback doesn't get called
+            // and the parameter value isn't set.
+            noise.attack.value  = 0.00001;
+            noise.sustain.value = 0.01;
+            noise.release.value = 0.00001;
+
+            var model = SoundModel(this, [], [noise]);
+
+            // Expose a parameter controlling the interval between two
+            // noise bursts.
+            model.params.define({name: 'delay', min: 0, max: 1, value: 0.01});
+            model.params.expose(noise, 'attack', 'sustain', 'release', 'gain');
+
+            // The "periodic" behaviour is just a loop of the simple noise tick
+            // sequenced with a variable delay.
+            model.proc = sh.loop(sh.track(noise.proc, sh.delay(model.delay)));
+
+            return model;
+        }
+
+        // SimpleNoiseTick adapted from Lonce's code
+        function SimpleNoiseTick(sh) {
+            var context = sh.audioContext;
+
+            // Create the model's output nodes.
+            var output = context.createGainNode();
+            output.gain.value = 0.0;
+
+            // Make the model object.
+            var model = SoundModel(this, [], [output]);
+            console.assert(model === this);
+
+            // Define its exposed parameters.
+            model.params.define({name: 'gain', min: 0, max: 1, value: 0.25});
+            model.params.define({name: 'attack', min: 0, max: 1, value: 0.002});
+            model.params.define({name: 'sustain', min: 0, max: 3, value: 0.01});
+            model.params.define({name: 'release', min: 0, max: 3, value: 0.002});
+
+            // We make a noise source and gate it using a gain envelope to simulate
+            // a "noise burst".
+            var noiseSource = model.keep(context.createJavaScriptNode(1024, 1, 1));
+
+            noiseSource.onaudioprocess = function (e) {
+                var i, N;
+                var outBuffer = e.outputBuffer.getChannelData(0);
+                for (i = 0, N = outBuffer.length; i < N; ++i) {
+                    outBuffer[i] = Math.random() * 2 - 1;
+                }
+            };
+
+            noiseSource.connect(output);
+
+            // When the model is "played", the output gain node's gain parameter is
+            // ramped up and down to simulate a noise burst. The model should be
+            // played using sh.play(model.proc).
+            model.proc = sh.track(sh.anim(output.gain, model.attack, 0, model.gain),
+                                  sh.anim(output.gain, model.sustain, model.gain, model.gain),
+                                  sh.anim(output.gain, model.release, model.gain, 0));
+
+            return model;
+        }
+
+    }
+
+    main( window
+        , org.anclab.steller.SampleManager
+        , org.anclab.steller.Scheduler
+        , org.anclab.steller.Parameterize
+        , org.anclab.steller.GraphNode);
+</script>
