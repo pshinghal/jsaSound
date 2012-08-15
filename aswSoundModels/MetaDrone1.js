@@ -93,7 +93,14 @@ var aswMetaDrone1Factory = function(){
 	// ----------------------------------------
 	//	Parameters 
 	// ----------------------------------------
-	myInterface.setBN= myInterface.registerParam("Base Note", 40, 100, m_baseNote, 
+	myInterface.setBN= myInterface.registerParam(
+		"Base Note",
+		"range",
+		{
+			"min": 40,
+			"max": 100,
+			"val": m_baseNote
+		},
 		function(i_bn){
 			var in_bn=parseInt(i_bn);
 			if (in_bn === m_baseNote) return; // args come in as floats, so we test if the parseInt is the same as baseNote
@@ -103,10 +110,18 @@ var aswMetaDrone1Factory = function(){
 			for (var i=0;i<m_currentNumChildrenActive;i++){
 				childModel[i].setCarFreq(note2Freq(m_baseNote));  
 			}
-		});
+		}
+	);
 			
 	// ----------------------------------------		
-	myInterface.setNumGenerators = myInterface.registerParam("Number of Generators", 0, 10, m_currentNumChildrenActive, 
+	myInterface.setNumGenerators = myInterface.registerParam(
+		"Number of Generators",
+		"range",
+		{
+			"min": 0,
+			"max": 10,
+			"val": m_currentNumChildrenActive
+		},
 		function(i_gens){
 			var in_gens=parseInt(i_gens);
 			if (in_gens === m_currentNumChildrenActive) return; 
@@ -126,10 +141,11 @@ var aswMetaDrone1Factory = function(){
 			};
 			m_currentNumChildrenActive = in_gens;
 			//console.log("setNumGenerators: EXITING  after setting m_currentNumChildrenActive ("+m_currentNumChildrenActive +") to in_gens ("+in_gens+")");
-		});
+		}
+	);
 
 	
-	console.log("paramlist = " + myInterface.getParamList().prettyString());			
+	//console.log("paramlist = " + myInterface.getParamList().prettyString());			
 	return myInterface;
 }
 

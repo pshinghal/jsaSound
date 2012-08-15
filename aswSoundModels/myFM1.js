@@ -120,43 +120,91 @@ var aswFMFactory = function(){
 	};
 
 	// ----------------------------------------
-	myInterface.setCarFreq= myInterface.registerParam("Carrier Frequency", 200, 1000, m_car_freq, 
-		function(i_val){
+	myInterface.setCarFreq= myInterface.registerParam(
+		"Carrier Frequency",
+                "range",
+                {
+                        "min": 200,
+                        "max": 1000,
+                        "val": m_car_freq
+                },
+		function(i_val) {
 			//console.log("in setCarFreq, m_car_freq = " + i_val);
 			m_car_freq = i_val;
 			m_CarrierNode.setFreq(m_car_freq); 
-		});
+		}
+	);
 	// ----------------------------------------
-	myInterface.setModIndex= myInterface.registerParam("Modulation Index", 0, 100, m_modIndex, 
-		function(i_val){
+	myInterface.setModIndex= myInterface.registerParam(
+		"Modulation Index",
+                "range",
+                {
+                        "min": 0,
+                        "max": 100,
+                        "val": m_modIndex
+                },
+		function(i_val) {
 			m_modIndex = i_val;
 			m_CarrierNode.setModIndex(m_modIndex); 
-		});
+		}
+	);
 	// ----------------------------------------
-	myInterface.setModFreq= myInterface.registerParam("Modulator Frequency", 0, 200, m_mod_freq, 
-		function(i_val){
+	myInterface.setModFreq= myInterface.registerParam(
+		"Modulator Frequency",
+                "range",
+                {
+                        "min": 0,
+                        "max": 200,
+                        "val": m_mod_freq
+                },
+		function(i_val) {
 			//console.log("in sm.setFreq, oscModulatorNode = " + oscModulatorNode);
 			oscModulatorNode.frequency.value = m_mod_freq = i_val; 
-		});
+		}
+	);
 			
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gainLevel, 
-		function(i_val){
-		//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
-		gainLevelNode.gain.value = m_gainLevel = i_val;
-	});
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gainLevel
+                },
+		function(i_val) {
+			//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
+			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attackTime, 
-		function(i_val){
-		m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
-	});
+	myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+		"range",
+		{
+			"min": 0,
+			"max": 1,
+			"val": m_attackTime
+		},
+		function(i_val) {
+			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_releaseTime, 
-		function(i_val){
-		m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+		"range",
+		{
+			"min": 0,
+			"max": 3,
+			"val": m_releaseTime
+		},
+		function(i_val) {
+			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------
 	myInterface.release = function(){

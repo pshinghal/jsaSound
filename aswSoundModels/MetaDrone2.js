@@ -91,7 +91,14 @@ var aswMetaDrone2Factory = function(){
 	// ----------------------------------------
 	//	Parameters 
 	// ----------------------------------------
-	myInterface.setBN= myInterface.registerParam("Base Note", 40, 100, m_baseNote, 
+	myInterface.setBN= myInterface.registerParam(
+		"Base Note",
+                "range",
+                {
+                        "min": 40,
+                        "max": 100,
+                        "val": m_baseNote
+                },
 		function(i_bn){
 			var in_bn=parseInt(i_bn);
 			if (in_bn === m_baseNote) return; // args come in as floats, so we test if the parseInt is the same as baseNote
@@ -103,10 +110,18 @@ var aswMetaDrone2Factory = function(){
 				childModel[i].setCenterFreq(childModel[i].getFreq()*Math.pow(2, bndif/12));  // glide freqs
 			}
 			m_baseNote = in_bn; 
-			});
+			}
+	);
 			
 	// ----------------------------------------		
-	myInterface.setNumGenerators = myInterface.registerParam("Number of Generators", 0, 10, m_currentNumChildrenActive, 
+	myInterface.setNumGenerators = myInterface.registerParam(
+		"Number of Generators",
+                "range",
+                {
+                        "min": 0,
+                        "max": 10,
+                        "val": m_currentNumChildrenActive
+                }, 
 		function(i_gens){
 			var in_gens=parseInt(i_gens);
 			if (in_gens === m_currentNumChildrenActive) return; 
@@ -127,18 +142,27 @@ var aswMetaDrone2Factory = function(){
 			};
 			m_currentNumChildrenActive = in_gens;
 			console.log("setNumGenerators: EXITING  after setting m_currentNumChildrenActive ("+m_currentNumChildrenActive +") to in_gens ("+in_gens+")");
-		});
+		}
+	);
 
 	// ----------------------------------------		
 	// This just goes and set the gains of all the child sound models
 	// It would be more efficient if child model audio was routed though a single metamodel gain node...
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 2, m_metagain, 
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 2,
+                        "val": m_metagain
+                },
 		function(i_val){
-		m_metagain=i_val;
-		for (var i=0; i<m_currentNumChildrenActive; i++){
-			childModel[i].setGain(m_metagain);
+			m_metagain=i_val;
+			for (var i=0; i<m_currentNumChildrenActive; i++){
+				childModel[i].setGain(m_metagain);
+			}
 		}
-	});
+	);
 
 	
 	//console.log("paramlist = " + myInterface.getParamList().prettyString());			

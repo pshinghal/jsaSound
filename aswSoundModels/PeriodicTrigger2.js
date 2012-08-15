@@ -70,18 +70,34 @@ var aswPeriodicTriggerFactory2 = function (){
 	};
 
 	// ----------------------------------------		
-	myInterface.setRate = myInterface.registerParam("Rate", 1, 100, m_rate, 
-		function(i_val){
-		m_rate = parseFloat(i_val);
-		m_ephasor.setFreq(m_rate);
-	});
+	myInterface.setRate = myInterface.registerParam(
+		"Rate",
+                "range",
+                {
+                        "min": 0,
+                        "max": 100,
+                        "val": m_rate
+                },
+		function(i_val) {
+			m_rate = parseFloat(i_val);
+			m_ephasor.setFreq(m_rate);
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gain, 
-		function(i_val){
-		m_gain = parseFloat(i_val);
-		child.setGain(m_gain);
-	});
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gain
+                },
+		function(i_val) {
+			m_gain = parseFloat(i_val);
+			child.setGain(m_gain);
+		}
+	);
 	
 	return myInterface;
 }

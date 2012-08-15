@@ -55,7 +55,7 @@ function makeSliderBox(i_sm){  // argument is a sound model
 		myWindow.document.write(" <p> " + params[i].name + "</p> ");
 		// create IDs to be used for change listener callbacks removing spaces in multi-word names 
 		controllerID = params[i].name.replace(/\s+/g, '') + "_controllerID";
-		textID   = params[i].name.replace(/\s+/g, '') + "_textID";
+		//textID   = params[i].name.replace(/\s+/g, '') + "_textID";
 		
 
 		if (params[i].type === "range") {
@@ -65,8 +65,10 @@ function makeSliderBox(i_sm){  // argument is a sound model
 			// Generate slider GUI code: ----------------------
 			// Output will look like this: <input id="foo_controllerID" type="range" min="0" max="1" step="0.01" value="0.1" style="width: 300px; height: 20px;" />	
 			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"range\" min=" + parseFloat(params[i].value.min) + " max="+ parseFloat(params[i].value.max) + " step=\"0.01\" value=" + parseFloat(val) +" style=\"width: 300px; height: 20px;\" />");	
+			
+			//REMOVING THIS BECAUSE BACKWARD COMPATIBILITY IS _NOT_ A GOOD IDEA (It won't run)
 			// Output will look like this: <input id="bar_textID" type="text" disabled="disabled" name="textfield" size=4 /> <br />
-			myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
+			//myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
 			//  -----------------------------------------------
 	
 			
@@ -75,17 +77,19 @@ function makeSliderBox(i_sm){  // argument is a sound model
 			sliderelmt = myWindow.document.getElementById(controllerID);
 			
 	
-			sliderelmt.change = function(i_textID, paramfunc) {  // factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
+			sliderelmt.change = function(paramfunc) {
+			// factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
+			//IS THIS REQUIRED NOW???
 				var cb = function(){ 
 					var sval = parseFloat(this.value);
 					// ---------------  call the setParameter function of the sm
 					paramfunc(sval); // jsbug - w/o parseFloat, when values are whole numbers, they can get passed as strings!!
 					//console.log("about to set the text field " + i_textID + " to " + sval); // executes during callback
-					myWindow.document.getElementById(i_textID).value = sval;
+					//myWindow.document.getElementById(i_textID).value = sval;
 				}
 				//console.log("returning the function to be passed to the event listener, " + cb); // executes during set-up of the callback
 				return cb;
-			}(textID, params[i].f) ;
+			}(params[i].f) ;
 			
 			sliderelmt.addEventListener('change', sliderelmt.change);
 	

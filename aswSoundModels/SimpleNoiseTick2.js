@@ -54,28 +54,60 @@ var aswSimpleNoiseTickFactory2 = function(){
 
 		
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gain, 
-		function(i_val){
-		m_gain = parseFloat(i_val);
-	});
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gain
+                },
+		function(i_val) {
+			m_gain = parseFloat(i_val);
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attack, 
-		function(i_val){
-		m_attack = parseFloat(i_val);  // javascript makes me cry ....
-	});
+	myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_attack
+                },
+		function(i_val) {
+			m_attack = parseFloat(i_val);  // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setSustainTime = myInterface.registerParam("Sustain Time", 0, 3, m_sustain, 
-		function(i_val){
-		m_sustain = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setSustainTime = myInterface.registerParam(
+		"Sustain Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_sustain
+                },
+		function(i_val) {
+			m_sustain = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_release, 
-		function(i_val){
-		m_release = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_release
+                },
+		function(i_val) {
+			m_release = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 		
 	//console.log("paramlist = " + myInterface.getParamList().prettyString());					

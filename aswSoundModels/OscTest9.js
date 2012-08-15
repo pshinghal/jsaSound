@@ -108,30 +108,62 @@ var oscFactory = function(){
 	};
 
 	// ----------------------------------------
-	myInterface.setFreq= myInterface.registerParam("Frequency", 200, 1000, m_frequency, 
-		function(i_freq){
+	myInterface.setFreq= myInterface.registerParam(
+		"Frequency",
+                "range",
+                {
+                        "min": 200,
+                        "max": 1000,
+                        "val": m_frequency
+                },
+		function(i_freq) {
 			//console.log("in sm.setFreq, oscNode = " + oscNode);
 			oscNode.frequency.value = m_frequency = i_freq; 
-		});
+		}
+	);
 			
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gainLevel, 
-		function(i_val){
-		//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
-		gainLevelNode.gain.value = m_gainLevel = i_val;
-	});
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gainLevel
+                },
+		function(i_val) {
+			//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
+			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attackTime, 
-		function(i_val){
-		m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
-	});
+	myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_attackTime
+                },
+		function(i_val) {
+			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_releaseTime, 
-		function(i_val){
-		m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_releaseTime
+                },
+		function(i_val) {
+			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------
 	myInterface.release = function(){

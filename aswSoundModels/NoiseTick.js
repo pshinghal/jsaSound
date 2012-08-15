@@ -83,41 +83,89 @@ var aswNoiseTickFactory = function(){
 	};
 
 	// ----------------------------------------
-	myInterface.setCarFreq= myInterface.registerParam("Carrier Frequency", 200, 2000, m_car_freq, 
-		function(i_val){
+	myInterface.setCarFreq= myInterface.registerParam(
+		"Carrier Frequency",
+                "range",
+                {
+                        "min": 200,
+                        "max": 2000,
+                        "val": m_car_freq
+                },
+		function(i_val) {
 			m_car_freq = i_val;
 			m_CarrierNode.setFreq(m_car_freq); 
-		});
+		}
+	);
 	// ----------------------------------------
-	myInterface.setModIndex= myInterface.registerParam("Modulation Index", 0, 1000, m_modIndex, 
-		function(i_val){
+	myInterface.setModIndex= myInterface.registerParam(
+		"Modulation Index",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1000,
+                        "val": m_modIndex
+                },
+		function(i_val) {
 			m_modIndex = i_val;
 			m_CarrierNode.setModIndex(m_modIndex); 
-		});
+		}
+	);
 		
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gainLevel, 
-		function(i_val){
-		gainLevelNode.gain.value = m_gainLevel = i_val;
-	});
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gainLevel
+                },
+		function(i_val) {
+			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attackTime, 
-		function(i_val){
-		m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
-	});
+	myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_attackTime
+                },
+		function(i_val) {
+			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setSustainTime = myInterface.registerParam("Sustain Time", 0, 3, m_sustainTime, 
-		function(i_val){
-		m_sustainTime = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setSustainTime = myInterface.registerParam(
+		"Sustain Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_sustainTime
+                },
+		function(i_val) {
+			m_sustainTime = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_releaseTime, 
-		function(i_val){
-		m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
-	});
+	myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_releaseTime
+                },
+		function(i_val) {
+			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 		
 	//console.log("paramlist = " + myInterface.getParamList().prettyString());					

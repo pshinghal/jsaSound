@@ -83,42 +83,82 @@ var aswfilteredNoiseBandFactory = function () {
 	};
 
 	// ----------------------------------------
-	myInterface.setCenterFreq= myInterface.registerParam("Center Frequency", 100, 2000, m_freq, 
+	myInterface.setCenterFreq = myInterface.registerParam(
+		"Center Frequency",
+		"range",
+		{
+			"min": 100,
+			"max": 2000,
+			"val": m_freq
+		},
 		function(i_val){
 			m_freq = i_val;
 			m_filterNode.frequency.value = m_freq; 
-		});
+		}
+	);
 	// ----------------------------------------
-	myInterface.setFilterQ= myInterface.registerParam("filter Q", 0, 150, m_Q, 
+	myInterface.setFilterQ = myInterface.registerParam(
+		"filter Q",
+		"range",
+		{
+			"min": 0,
+			"max": 150,
+			"val": m_Q
+		},
 		function(i_val){
 			m_Q = i_val;
 			m_filterNode.Q.value = m_Q;
-		});
+		}
+	);
 		
 	// ----------------------------------------		
-	myInterface.setGain = myInterface.registerParam("Gain", 0, 2, m_gainLevel, 
+	myInterface.setGain = myInterface.registerParam(
+		"Gain",
+		"range",
+		{
+			"min": 0,
+			"max": 2,
+			"val": m_gainLevel
+		},
 		function(i_val){
-		gainLevelNode.gain.value = m_gainLevel = i_val;
-	});
+			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attackTime, 
+	myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+		"range",
+		{
+			"min": 0,
+			"max": 1,
+			"val": m_attackTime
+		},
 		function(i_val){
-		m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
-	});
+			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------		
-	myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_releaseTime, 
+	myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+		"range",
+		{
+			"min": 0,
+			"max": 3,
+			"val": m_releaseTime
+		},
 		function(i_val){
-		m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
-	});
+			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
+		}
+	);
 
 	// ----------------------------------------
 	myInterface.release = function(){
 		now = audioContext.currentTime;
 		stopTime = now + m_releaseTime;
 
-		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime); 
+		gainLevelNode.gain.linearRampToValueAtTime(0, stopTime); 
 	};
 	//--------------------------------------------------------------------------------
 	// Other methods for the interface

@@ -16,12 +16,13 @@ function mp3Factory() {
 	var m_gainLevel = .5;
 	var m_attackTime = .05;
 	var m_releaseTime = 1.0;
+	var m_soundUrl = "./sounds/schumannLotusFlower.mp3";
 	var stopTime = 0.0;
 	var now = 0.0;
 	
 	var myInterface = baseSM();
 
-	xhr.open('GET', "./sounds/schumannLotusFlower.mp3", true);
+	xhr.open('GET', m_soundUrl, true);
 	xhr.responseType = 'arraybuffer';
 	xhr.onerror = function(e) {
 		console.error(e);
@@ -79,20 +80,46 @@ function mp3Factory() {
 		}
 	};
 
-        myInterface.setGain = myInterface.registerParam("Gain", 0, 1, m_gainLevel, 
+        myInterface.setGain = myInterface.registerParam(
+		"Gain",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_gainLevel
+                },
                 function(i_val){
-                gainLevelNode.gain.value = m_gainLevel = i_val;
-        });
+	                gainLevelNode.gain.value = m_gainLevel = i_val;
+        	}
+	);
 
-        myInterface.setAttackTime = myInterface.registerParam("Attack Time", 0, 1, m_attackTime, 
+        myInterface.setAttackTime = myInterface.registerParam(
+		"Attack Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 1,
+                        "val": m_attackTime
+                },
                 function(i_val){
-                m_attackTime = parseFloat(i_val);
-        });
+                	m_attackTime = parseFloat(i_val);
+        	}
+	);
 
-        myInterface.setReleaseTime = myInterface.registerParam("Release Time", 0, 3, m_releaseTime, 
+        myInterface.setReleaseTime = myInterface.registerParam(
+		"Release Time",
+                "range",
+                {
+                        "min": 0,
+                        "max": 3,
+                        "val": m_releaseTime
+                },
                 function(i_val){
-                m_releaseTime = parseFloat(i_val);
-        });
+        	        m_releaseTime = parseFloat(i_val);
+        	}
+	);
+
+	myInterface.setSoundUrl = myInterface.registerParam
 
         myInterface.release = function(){
                 now = audioContext.currentTime;
