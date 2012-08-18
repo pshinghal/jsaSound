@@ -1,6 +1,6 @@
 /* #INCLUDE
-aswAudioComponents/aswAudioComponents.js
-    for baseSM and noiseNodeFactory()
+components/jsaAudioComponents.js
+ for baseSM and noiseNodeFactory()
 	
 utils/utils.js
 	for Array.prototype.prettyString 
@@ -16,7 +16,7 @@ utils/utils.js
 ******************************************************************************************************
 */
 
-var aswfilteredNoiseBandFactory = function () {
+var jsaFilteredNoiseBandFactory = function() {
 	// defined outside "aswNoisyFMInterface" so that they can't be seen be the user of the sound models.
 	// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
 	var	m_noiseNode = noiseNodeFactory(),
@@ -25,16 +25,16 @@ var aswfilteredNoiseBandFactory = function () {
 		gainLevelNode = audioContext.createGainNode();
 	
 	// these are both defaults for setting up initial values (and displays) but also a way of remembring across the tragic short lifetime of Nodes.
-	var m_gainLevel = 0.5,    // the point to (or from) which gainEnvNode ramps glide
-		m_freq = 440,        
+	var m_gainLevel = 0.5, // the point to (or from) which gainEnvNode ramps glide
+		m_freq = 440,	
 		m_Q = 150.0,	
-		m_attackTime = .05,  
-		m_releaseTime = 1.0,	   
-		stopTime = 0.0,        // will be > audioContext.currentTime if playing
+		m_attackTime = .05, 
+		m_releaseTime = 1.0,	 
+		stopTime = 0.0,	// will be > audioContext.currentTime if playing
 		now = 0.0;
 			
 	// (Re)create the nodes and thier connections.
-	var buildModelArchitecture = function () {
+	var buildModelArchitecture = function() {
 		// These must be called on every play because of the tragically short lifetime ... however, after the 
 		// they have actally been completely deleted - a reference to gainLevelNode, for example, still returns [object AudioGainNode] 
 		// Also have to set all of their state values since they all get forgotten, too!!
@@ -45,7 +45,7 @@ var aswfilteredNoiseBandFactory = function () {
 		m_filterNode.type = m_filterNode.BANDPASS;
 		m_filterNode.frequency.value = m_freq;
 		m_filterNode.Q.value = m_Q; 
-  
+ 
 		gainEnvNode = audioContext.createGainNode();
 		gainEnvNode.gain.value = 0; 
 		
@@ -64,7 +64,7 @@ var aswfilteredNoiseBandFactory = function () {
 	// define the PUBLIC INTERFACE for the model	
 	var myInterface = baseSM(); 	
 	// ----------------------------------------
-	myInterface.play = function(i_freq, i_gain){	
+	myInterface.play = function(i_freq, i_gain) {	
 		now = audioContext.currentTime;
 		gainEnvNode.gain.cancelScheduledValues( now );
 		// The rest of the code is for new starts or restarts	
@@ -77,7 +77,7 @@ var aswfilteredNoiseBandFactory = function () {
 		
 		// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
 		foo = now + m_attackTime;
-		//console.log( "   ramp to level " + gainLevelNode.gain.value + " at time " + foo);
+		//console.log( " ramp to level " + gainLevelNode.gain.value + " at time " + foo);
 		gainEnvNode.gain.setValueAtTime(0, now);
 		gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
 	};
@@ -91,7 +91,7 @@ var aswfilteredNoiseBandFactory = function () {
 			"max": 2000,
 			"val": m_freq
 		},
-		function(i_val){
+		function(i_val) {
 			m_freq = i_val;
 			m_filterNode.frequency.value = m_freq; 
 		}
@@ -105,7 +105,7 @@ var aswfilteredNoiseBandFactory = function () {
 			"max": 150,
 			"val": m_Q
 		},
-		function(i_val){
+		function(i_val) {
 			m_Q = i_val;
 			m_filterNode.Q.value = m_Q;
 		}
@@ -120,7 +120,7 @@ var aswfilteredNoiseBandFactory = function () {
 			"max": 2,
 			"val": m_gainLevel
 		},
-		function(i_val){
+		function(i_val) {
 			gainLevelNode.gain.value = m_gainLevel = i_val;
 		}
 	);
@@ -134,8 +134,8 @@ var aswfilteredNoiseBandFactory = function () {
 			"max": 1,
 			"val": m_attackTime
 		},
-		function(i_val){
-			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+		function(i_val) {
+			m_attackTime = parseFloat(i_val); // javascript makes me cry ....
 		}
 	);
 
@@ -148,13 +148,13 @@ var aswfilteredNoiseBandFactory = function () {
 			"max": 3,
 			"val": m_releaseTime
 		},
-		function(i_val){
+		function(i_val) {
 			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
 		}
 	);
 
 	// ----------------------------------------
-	myInterface.release = function(){
+	myInterface.release = function() {
 		now = audioContext.currentTime;
 		stopTime = now + m_releaseTime;
 
@@ -163,7 +163,7 @@ var aswfilteredNoiseBandFactory = function () {
 	//--------------------------------------------------------------------------------
 	// Other methods for the interface
 	//----------------------------------------------------------------------------------
-	myInterface.getFreq = function(){ return m_freq;};
+	myInterface.getFreq = function() { return m_freq;};
 	
 	//console.log("paramlist = " + myInterface.getParamList().prettyString());					
 	return myInterface;

@@ -3,11 +3,11 @@ Author: Lonce Wyse
 Date: July 2012
 */
 /* #INCLUDE
-aswAudioComponents/aswAudioComponents.js
+components/jsaAudioComponents.js
     for baseSM 
 	
-aswSoundModels/aswSimpleNoiseTick2.js
-     for aswSimpleNoiseTickFactory2
+models/jsaSimpleNoiseTick2.js
+     for jsaSimpleNoiseTickFactory2
 	 
 */
 /* This model explores using JavaScriptAudioNode.onaudioprocess() as a callback for generating events for other Audio Node. 
@@ -15,15 +15,15 @@ aswSoundModels/aswSimpleNoiseTick2.js
 	
 */
 
-var aswPeriodicTriggerFactory2 = function (){
+var jsaPeriodicTriggerFactory2 = function (){
 	var m_futureinterval = .05;  // the amount of time to compute events ahead of now
 
 	var m_rate=5;  // in events per second
 	var m_gain = 0.40;
 	
-	var child = aswSimpleNoiseTickFactory2();
+	var child = jsaSimpleNoiseTickFactory2();
 	
-	var m_ephasor = aswEventPhasor();
+	var m_ephasor = jsaEventPhasor();
 	m_ephasor.setFreq(m_rate);
 
 	var eventGenerator = audioContext.createJavaScriptNode(k_bufferLength, 1, 1);

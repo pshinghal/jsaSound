@@ -1,5 +1,5 @@
 /* #INCLUDE
-aswAudioComponents/aswAudioComponents.js
+components/jsaAudioComponents.js
     for baseSM and fmodOscFactory
 	
 utils/utils.js
@@ -11,7 +11,7 @@ utils/utils.js
 ******************************************************************************************************
 */
 
-var aswSimpleNoiseTickFactory2 = function(){
+var jsaSimpleNoiseTickFactory2 = function(){
 	var m_attack=0.002;
 	var m_sustain=0.01;
 	var m_release=0.002;

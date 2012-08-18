@@ -1,5 +1,5 @@
 /* #INCLUDE
-aswAudioComponents/aswAudioComponents.js
+components/jsaAudioComponents.js
     for baseSM and fmodOscFactory
 	
 utils/utils.js
@@ -15,7 +15,7 @@ utils/utils.js
 ******************************************************************************************************
 */
 
-var aswNoiseTickFactory = function(){
+var jsaNoisyFMFactory = function(){
 	// defined outside "aswNoisyFMInterface" so that they can't be seen be the user of the sound models.
 	// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
 	var	noiseModulatorNode = noiseNodeFactory();
@@ -24,14 +24,13 @@ var aswNoiseTickFactory = function(){
 	var	gainLevelNode = audioContext.createGainNode();
 	
 	// these are both defaults for setting up initial values (and displays) but also a way of remembring across the tragic short lifetime of Nodes.
-	var m_gainLevel = 0.5;    // the point to (or from) which gainEnvNode ramps glide
-	var m_car_freq = 440;        
-	var m_modIndex = 1000.0		
-	var m_attackTime = 0;  
-	var m_sustainTime = 0.2;
-	var m_releaseTime = 0;	   
-	var stopTime = 0.0;        // will be > audioContext.currentTime if playing
-	var now = 0.0;
+	var m_gainLevel=.5;    // the point to (or from) which gainEnvNode ramps glide
+	var m_car_freq=440;        
+	var m_modIndex=1.0		
+	var m_attackTime=.05;  
+	var m_releaseTime=1.0;	   
+	var stopTime=0.0;        // will be > audioContext.currentTime if playing
+	var now=0.0;
 	
 		
 	// (Re)create the nodes and thier connections.
@@ -64,11 +63,9 @@ var aswNoiseTickFactory = function(){
 	// ----------------------------------------
 	myInterface.play = function(i_freq, i_gain){	
 		now = audioContext.currentTime;
-
 		gainEnvNode.gain.cancelScheduledValues( now );
-		// The model turns itself off after a fixed amount of time	
-		stopTime = now + m_attackTime+m_sustainTime+m_releaseTime;
-		//---- noiseModulatorNode.noteOff(stopTime);  // "cancels" any previously set future stops, I think
+
+		stopTime = bigNum;
 
 		// if no input, remember from last time set
 		m_car_freq = i_freq ? i_freq : m_car_freq;
@@ -76,10 +73,10 @@ var aswNoiseTickFactory = function(){
 		gainLevelNode.gain.value = i_gain ? i_gain : m_gainLevel;
 		
 		// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
+		foo = now + m_attackTime;
+		//console.log( "   ramp to level " + gainLevelNode.gain.value + " at time " + foo);
 		gainEnvNode.gain.setValueAtTime(0, now);
 		gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
-		gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime+ m_sustainTime);
-		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
 	};
 
 	// ----------------------------------------
@@ -108,8 +105,7 @@ var aswNoiseTickFactory = function(){
 		function(i_val) {
 			m_modIndex = i_val;
 			m_CarrierNode.setModIndex(m_modIndex); 
-		}
-	);
+		});
 		
 	// ----------------------------------------		
 	myInterface.setGain = myInterface.registerParam(
@@ -140,20 +136,6 @@ var aswNoiseTickFactory = function(){
 	);
 
 	// ----------------------------------------		
-	myInterface.setSustainTime = myInterface.registerParam(
-		"Sustain Time",
-                "range",
-                {
-                        "min": 0,
-                        "max": 3,
-                        "val": m_sustainTime
-                },
-		function(i_val) {
-			m_sustainTime = parseFloat(i_val); // javascript makes me cry ....
-		}
-	);
-
-	// ----------------------------------------		
 	myInterface.setReleaseTime = myInterface.registerParam(
 		"Release Time",
                 "range",
@@ -167,6 +149,13 @@ var aswNoiseTickFactory = function(){
 		}
 	);
 
+	// ----------------------------------------
+	myInterface.release = function(){
+		now = audioContext.currentTime;
+		stopTime = now + m_releaseTime;
+
+		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime); 
+	};
 		
 	//console.log("paramlist = " + myInterface.getParamList().prettyString());					
 	return myInterface;

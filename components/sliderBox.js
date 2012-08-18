@@ -13,11 +13,12 @@ It creates a new window for a "player" GUI with sliders and text boxes to show v
 */
 
 // Create the GUI for sound model interaction and the callbacks for taking action
-function makeSliderBox(i_sm){  // argument is a sound model 
+function makeSliderBox(i_sm) {  // argument is a sound model 
 	var i;
 	var val;
 	var controllerID, textID;
-	var sliderelmt; // temp variable for shorhand
+	var controllerElement; // temp variable for shorhand
+	var controllerButton;
 	var playingP=false;
 	
 	var myInterface = baseSM(); // yep, this GUI has the same interface as a base sound model.
@@ -37,8 +38,8 @@ function makeSliderBox(i_sm){  // argument is a sound model
 	// Create the Play button
 	myWindow.document.write(" <input id=\"playbutton_ID\" type=\"button\" value = \"Play\" /> ");	
 	// Play button callback 
-	myWindow.document.getElementById("playbutton_ID").addEventListener('click', function(){ 
-		if (! playingP){
+	myWindow.document.getElementById("playbutton_ID").addEventListener('click', function() { 
+		if (! playingP) {
 			myWindow.document.getElementById("playbutton_ID").value = "Release";
 			// Call soundmodel method
 			i_sm.play();
@@ -51,7 +52,7 @@ function makeSliderBox(i_sm){  // argument is a sound model
 	});
 		
 	// Now set up the parameters
-	for (i=0;i<params.length; i++){
+	for (i=0;i<params.length; i++) {
 		myWindow.document.write(" <p> " + params[i].name + "</p> ");
 		// create IDs to be used for change listener callbacks removing spaces in multi-word names 
 		controllerID = params[i].name.replace(/\s+/g, '') + "_controllerID";
@@ -74,13 +75,13 @@ function makeSliderBox(i_sm){  // argument is a sound model
 			
 			// for each slider/text field pair, set up a callback to change the text field when the slider moves.
 			// WARNING: COOL AND PROPERLY-WRITTEN CLOSURE CODE AHEAD ...
-			sliderelmt = myWindow.document.getElementById(controllerID);
+			controllerElement = myWindow.document.getElementById(controllerID);
 			
 	
-			sliderelmt.change = function(paramfunc) {
+			controllerElement.change = function(paramfunc) {
 			// factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
 			//IS THIS REQUIRED NOW???
-				var cb = function(){ 
+				var cb = function() { 
 					var sval = parseFloat(this.value);
 					// ---------------  call the setParameter function of the sm
 					paramfunc(sval); // jsbug - w/o parseFloat, when values are whole numbers, they can get passed as strings!!
@@ -89,14 +90,14 @@ function makeSliderBox(i_sm){  // argument is a sound model
 				}
 				//console.log("returning the function to be passed to the event listener, " + cb); // executes during set-up of the callback
 				return cb;
-			}(params[i].f) ;
+			}(params[i].f);
 			
-			sliderelmt.addEventListener('change', sliderelmt.change);
+			controllerElement.addEventListener('change', controllerElement.change);
 	
 			// Store the min and max value of the parameters so that we can properly set the sliders from normalized control message values
 			// We dont need the default value or store a function to call - thus the two nulls
 			myInterface.registerParam(
-				sliderelmt,
+				controllerElement,
 				"range",
 				{
 					"min": params[i].value.min,
@@ -106,42 +107,54 @@ function makeSliderBox(i_sm){  // argument is a sound model
 				null
 			);
 		} else if (params[i].type === "url") {
-			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"url\" value=\"Enter URL here\" style=\"width: 300px; height: 20px;\" />");
-			//NOT IMPLEMENTING ATTACHED TEXT FIELD
-			//...yet
+			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"url\" value=\"" + params[i].value.val + "\" style=\"width: 300px; height: 20px;\" />");
+			myWindow.document.write("<input id=\"" + controllerID + "_button\" type=\"button\" value=\"Load\" style=\"width: 50px; height: 20px;\" />");
+			controllerElement = myWindow.document.getElementById(controllerID);
+			controllerButton = myWindow.document.getElementById(controllerID + "_button");
+			controllerElement.change = function(paramfunc) {
+				var cb = function() {
 
-			//NOT IMPLEMENTING THAT registerParam thing either
-			//...again, yet
+					//SHOULD ANY PROCESSING BE DONE HERE???
+					
+					console.log("Calling function with value = " + controllerElement.value);
+
+					paramfunc(controllerElement.value);
+				}
+				return cb;
+			}(params[i].f);
+
+			controllerButton.addEventListener('click', controllerElement.change);
+			//NOT IMPLEMENTING THAT registerParam thing... yet
 		}
 	} // end for each parameter loop
-		
+
 	// Turn off sounds if window is closed
 	myWindow.onbeforeunload = confirmExit;
-	function confirmExit(){
+	function confirmExit() {
 		i_sm.release();
-	}	
-	
+	}
+
 	myWindow.focus();
-	
+
 	//--------------------------------------------------------------------------------------------------------------
 	// Now overide the methods of the sound model interface to push the buttons and move the sliders on this GUI
 	//   (rather than call play and stop and change paramters directly)
 	//    We do this so that programatic changes will be reflected in the gui as well as (through the gui) change the sound.
 	//    To the caller, this API looks just like a sound model - except that they have to use setParamNorm rather than sound model specific parameter setting functions. 
 	
-	myInterface.play = function(){
+	myInterface.play = function() {
 		myWindow.document.getElementById("playbutton_ID").click(); void 0;
 	};
 	
-	myInterface.release = function(){
+	myInterface.release = function() {
 		myWindow.document.getElementById("playbutton_ID").click(); void 0;
 	};
 
 //FIND A NEW WAY TO DO THIS!!!
-//	myInterface.setParamNorm = function(i_pID, i_val){
+//	myInterface.setParamNorm = function(i_pID, i_val) {
 //		var p;
 //		var plist = myInterface.getParamList();
-//		if (i_pID < plist.length){	
+//		if (i_pID < plist.length) {	
 //			p=plist[i_pID];		
 //			p[0].value=(p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
 //			p[0].change(); // triggers the 

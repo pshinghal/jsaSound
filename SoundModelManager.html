@@ -7,26 +7,26 @@ This code demonstrates
 ------------------------------------------------------------------------------- -->   
 
 	<!-- #include files for the sound models -->
-	<script src="aswAudioComponents/aswAudioComponents.js"></script>
+	<script src="components/jsaAudioComponents.js"></script>
 	<script src="utils/utils.js"></script>
 	<!-- -->
 	
 	<!-- list of sound models to incude -->
-    <script src="aswSoundModels/OscTest9.js"></script>
-	<script src="aswSoundModels/myFM1.js"></script>
-	<script src="aswSoundModels/noisyFM.js"></script>
-	<script src="aswSoundModels/MetaDrone1.js"></script>
-	<script src="aswSoundModels/filteredNoiseBand.js"></script>
-	<script src="aswSoundModels/MetaDrone2.js"></script>
-	<script src="aswSoundModels/ToneTick.js"></script>
-	<script src="aswSoundModels/NoiseTick.js"></script>
-	<script src="aswSoundModels/SimpleNoiseTick2.js"></script>
-	<script src="aswSoundModels/PeriodicTrigger2.js"></script>
-	<script src="aswSoundModels/Mp3.js"></script>
+    <script src="models/OscTest9.js"></script>
+	<script src="models/myFM1.js"></script>
+	<script src="models/noisyFM.js"></script>
+	<script src="models/MetaDrone1.js"></script>
+	<script src="models/filteredNoiseBand.js"></script>
+	<script src="models/MetaDrone2.js"></script>
+	<script src="models/ToneTick.js"></script>
+	<script src="models/NoiseTick.js"></script>
+	<script src="models/SimpleNoiseTick2.js"></script>
+	<script src="models/PeriodicTrigger2.js"></script>
+	<script src="models/Mp3.js"></script>
 	<!-- -->
 	
 	<!--  "Player" code -->
-	<script src="aswAudioComponents/sliderBox.js"></script>
+	<script src="components/sliderBox.js"></script>
 	
 	<!--Sound loading and management code-->
 	<script type="text/javascript">	
@@ -44,15 +44,15 @@ This code demonstrates
 		// Names are arbitrary, makers must be defined in the "#include"ed sound model files above
 		soundList = [{},
 					 {name: "Square Wave", maker: oscFactory},
-					 {name: "Classic FM", maker: aswFMFactory},
-					 {name: "Noisy FM", maker: aswNoisyFMFactory},
-					 {name: "UglyMetadrone", maker: aswMetaDrone1Factory},
-					 {name: "Noise Band", maker: aswfilteredNoiseBandFactory},
-					 {name: "Metadrone2", maker: aswMetaDrone2Factory},
-					 {name: "ToneTick", maker: aswToneTickFactory},
-					 {name: "NoiseTick", maker: aswNoiseTickFactory},
-					 {name: "Simple Noise Tick 2", maker: aswSimpleNoiseTickFactory2},
-					 {name: "Period Trigger 2", maker: aswPeriodicTriggerFactory2},
+					 {name: "Classic FM", maker: jsaFMFactory},
+					 {name: "Noisy FM", maker: jsaNoisyFMFactory},
+					 {name: "UglyMetadrone", maker: jsaMetaDrone1Factory},
+					 {name: "Noise Band", maker: jsaFilteredNoiseBandFactory},
+					 {name: "Metadrone2", maker: jsaMetaDrone2Factory},
+					 {name: "ToneTick", maker: jsaToneTickFactory},
+					 {name: "NoiseTick", maker: jsaNoiseTickFactory},
+					 {name: "Simple Noise Tick 2", maker: jsaSimpleNoiseTickFactory2},
+					 {name: "Period Trigger 2", maker: jsaPeriodicTriggerFactory2},
 					 {name: "mp3 Schumann", maker: mp3Factory}
 					 ]
 		

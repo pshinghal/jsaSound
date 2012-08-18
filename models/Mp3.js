@@ -8,6 +8,7 @@ function mp3Factory() {
 	//CUrrently, I've just enabled looping to overcome that problem
 
 	var buffLoaded = false, architectureBuilt = false;
+
 	var xhr = new XMLHttpRequest();
 	var soundBuff = null;
 
@@ -16,25 +17,31 @@ function mp3Factory() {
 	var m_gainLevel = .5;
 	var m_attackTime = .05;
 	var m_releaseTime = 1.0;
-	var m_soundUrl = "./sounds/schumannLotusFlower.mp3";
+	var m_soundUrl = "";//"./sounds/schumannLotusFlower.mp3";
 	var stopTime = 0.0;
 	var now = 0.0;
 	
 	var myInterface = baseSM();
 
-	xhr.open('GET', m_soundUrl, true);
-	xhr.responseType = 'arraybuffer';
-	xhr.onerror = function(e) {
-		console.error(e);
+	function sendXhr() {
+		//SHOULD XHR BE RE-CONSTRUCTED??
+		xhr.open('GET', m_soundUrl, true);
+		xhr.responseType = 'arraybuffer';
+		xhr.onerror = function(e) {
+			console.error(e);
+		}
+		xhr.onload = function() {
+			console.log("Sound(s) loaded");
+			soundBuff = audioContext.createBuffer(xhr.response, false);
+			buffLoaded = true;
+			console.log("Buffer Loaded!");
+			
+			//SHOULD THIS FUNCTION BE CALLED BEFORE CHANGING buffLoaded ???
+			buildModelArchitecture();
+		}
+		xhr.send();
 	}
-	xhr.onload = function() {
-		console.log("Sound(s) loaded");
-		soundBuff = audioContext.createBuffer(xhr.response, false);
-		buffLoaded = true;
-		console.log("Buffer Loaded!");
 
-		buildModelArchitecture();
-	}
 	function buildModelArchitecture() {
 		sourceNode = audioContext.createBufferSource();
 		gainEnvNode = audioContext.createGainNode();
@@ -51,10 +58,8 @@ function mp3Factory() {
 
 		architectureBuilt = true;
 	}
-	xhr.send();
 
-	myInterface.play = function (i_freq, i_gain) {
-	//i_freq has NO role here, just putting it to ensure the calls with modified gains are made correctly
+	myInterface.play = function(i_gain) {
 		if (buffLoaded) {
 			now = audioContext.currentTime;
 			if (stopTime <= now) {
@@ -77,59 +82,71 @@ function mp3Factory() {
 			gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime);
 		} else {
 			console.log("Buffer NOT loaded yet!");
+			//CREATE EXTERNAL CALLBACK HERE!!!
+			alert("Press load and wait!");
 		}
 	};
 
-        myInterface.setGain = myInterface.registerParam(
+	myInterface.setGain = myInterface.registerParam(
 		"Gain",
-                "range",
-                {
-                        "min": 0,
-                        "max": 1,
-                        "val": m_gainLevel
-                },
-                function(i_val){
-	                gainLevelNode.gain.value = m_gainLevel = i_val;
-        	}
+		"range",
+		{
+			"min": 0,
+			"max": 1,
+			"val": m_gainLevel
+		},
+		function(i_val) {
+			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
 	);
 
-        myInterface.setAttackTime = myInterface.registerParam(
+	myInterface.setAttackTime = myInterface.registerParam(
 		"Attack Time",
-                "range",
-                {
-                        "min": 0,
-                        "max": 1,
-                        "val": m_attackTime
-                },
-                function(i_val){
-                	m_attackTime = parseFloat(i_val);
-        	}
+		"range",
+		{
+			"min": 0,
+			"max": 1,
+			"val": m_attackTime
+		},
+		function(i_val) {
+			m_attackTime = parseFloat(i_val);
+		}
 	);
 
-        myInterface.setReleaseTime = myInterface.registerParam(
+	myInterface.setReleaseTime = myInterface.registerParam(
 		"Release Time",
-                "range",
-                {
-                        "min": 0,
-                        "max": 3,
-                        "val": m_releaseTime
-                },
-                function(i_val){
-        	        m_releaseTime = parseFloat(i_val);
-        	}
+		"range",
+		{
+			"min": 0,
+			"max": 3,
+			"val": m_releaseTime
+		},
+		function(i_val) {
+			m_releaseTime = parseFloat(i_val);
+		}
 	);
 
-	myInterface.setSoundUrl = myInterface.registerParam
+	myInterface.setSoundUrl = myInterface.registerParam(
+		"Sound URL",
+		"url",
+		{
+			"val": ""
+		},
+		function(i_val) {
+			m_soundUrl = i_val;
+			buffLoaded = false;
+			sendXhr();
+		}
+	);
 
-        myInterface.release = function(){
-                now = audioContext.currentTime;
-                stopTime = now + m_releaseTime;
+	myInterface.release = function() {
+		now = audioContext.currentTime;
+		stopTime = now + m_releaseTime;
 
-                gainEnvNode.gain.linearRampToValueAtTime(0, stopTime); 
-                sourceNode.noteOff(stopTime);
+		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime); 
+		sourceNode.noteOff(stopTime);
 		architectureBuilt = false; //probably
-        };
-
+	};
 
 	return myInterface;
 }
