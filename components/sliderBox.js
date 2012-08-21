@@ -69,7 +69,7 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 			
 			//REMOVING THIS BECAUSE BACKWARD COMPATIBILITY IS _NOT_ A GOOD IDEA (It won't run)
 			// Output will look like this: <input id="bar_textID" type="text" disabled="disabled" name="textfield" size=4 /> <br />
-			//myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
+			myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
 			//  -----------------------------------------------
 	
 			
@@ -151,15 +151,15 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 	};
 
 //FIND A NEW WAY TO DO THIS!!!
-//	myInterface.setParamNorm = function(i_pID, i_val) {
-//		var p;
-//		var plist = myInterface.getParamList();
-//		if (i_pID < plist.length) {	
-//			p=plist[i_pID];		
-//			p[0].value=(p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
-//			p[0].change(); // triggers the 
-//		}
-//	}
+	myInterface.setRangeParamNorm = function(i_pID, i_val) {
+		var p;
+		var plist = myInterface.getParamList();
+		if (i_pID < plist.length) {	
+			p=plist[i_pID];		
+			p.name.value=(p.value.min+i_val*(p.value.max-p.value.min));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
+			p.name.change(); // triggers the 
+		}
+	}
 	
 	return myInterface;
 		

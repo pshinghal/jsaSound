@@ -52,12 +52,12 @@ var baseSM = function(){
 	
 //FIND A NEW WAY TO DO THIS!!!
 //	// A "generic" way to set parameters, identifying them with their index on the paramList, and using a [0,1] normalized value range
-//	bsmInterface.setParamNorm = function(i_pID, i_val){
-//		if (i_pID < paramList.length){	
-//			p=paramList[i_pID];
-//			p[4](p[1]+i_val*(p[2]-p[1]));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
-//		}
-//	}
+	bsmInterface.setRangeParamNorm = function(i_pID, i_val){
+		if (i_pID < paramList.length){	
+			p=paramList[i_pID];
+			p.f(p.value.min+i_val*(p.value.max-p.value.min));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
+		}
+	}
 	
 	// all sound models need to have these methods
 	bsmInterface.play = function(){
