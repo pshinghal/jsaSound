@@ -1,3 +1,12 @@
+/* ---------------------------------------------------------------------------------------
+This jsaSound Code is distributed under LGPL 3
+Copyright (C) 2012 National University of Singapore
+Inquiries: director@anclab.org
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or any later version.
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
+You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
+------------------------------------------------------------------------------------------*/
 /*
 Author: Lonce Wyse
 Date: July 2012
@@ -21,7 +30,8 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 	var controllerButton;
 	var playingP=false;
 	
-	var myInterface = baseSM(); // yep, this GUI has the same interface as a base sound model.
+	// This is the interface that will be returned by this factory method
+	var myInterface = baseSM(); // yep, this GUI has the same interface as a base sound model : play, release, and setParameter!
 
 
 	var params = i_sm.getParamList();
@@ -67,12 +77,10 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 			// Output will look like this: <input id="foo_controllerID" type="range" min="0" max="1" step="0.01" value="0.1" style="width: 300px; height: 20px;" />	
 			myWindow.document.write("<input id=\"" + controllerID + "\" type=\"range\" min=" + parseFloat(params[i].value.min) + " max="+ parseFloat(params[i].value.max) + " step=\"0.01\" value=" + parseFloat(val) +" style=\"width: 300px; height: 20px;\" />");	
 			
-			//REMOVING THIS BECAUSE BACKWARD COMPATIBILITY IS _NOT_ A GOOD IDEA (It won't run)
-			// Output will look like this: <input id="bar_textID" type="text" disabled="disabled" name="textfield" size=4 /> <br />
-			myWindow.document.write("<input id=" + textID +   " type=\"text\" disabled=\"disabled\" value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
+			// Output will look like this: <input id="bar_textID" type="text"  name="textfield" size=4 /> <br />
+			myWindow.document.write("<input id=" + textID +   " type=\"text\"  value = " + parseFloat(val) + " name=\"textfield\" size=2 /> ");
 			//  -----------------------------------------------
-	
-			
+				
 			// for each slider/text field pair, set up a callback to change the text field when the slider moves.
 			// WARNING: COOL AND PROPERLY-WRITTEN CLOSURE CODE AHEAD ...
 			controllerElement = myWindow.document.getElementById(controllerID);
@@ -80,7 +88,6 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 	
 			controllerElement.change = function(i_textID, paramfunc) {
 			// factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
-			//IS THIS REQUIRED NOW???
 				var cb = function() { 
 					var sval = parseFloat(this.value);
 					// ---------------  call the setParameter function of the sm
@@ -112,12 +119,9 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 			controllerElement = myWindow.document.getElementById(controllerID);
 			controllerButton = myWindow.document.getElementById(controllerID + "_button");
 			controllerElement.change = function(paramfunc) {
-				var cb = function() {
-
-					//SHOULD ANY PROCESSING BE DONE HERE???
-					
+				var cb = function() 
+					//SHOULD ANY PROCESSING BE DONE HERE???					
 					console.log("Calling function with value = " + controllerElement.value);
-
 					paramfunc(controllerElement.value);
 				}
 				return cb;
@@ -157,11 +161,10 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 		if (i_pID < plist.length) {	
 			p=plist[i_pID];		
 			p.name.value=(p.value.min+i_val*(p.value.max-p.value.min));   // pfunc(pmin+i_Val*(pmax-pmin)) // ... javascript makes me laugh
-			p.name.change(); // triggers the 
+			p.name.change(); // triggers the slider update
 		}
 	}
 	
-	return myInterface;
-		
+	return myInterface;		
 }
 
