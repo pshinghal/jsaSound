@@ -56,7 +56,7 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 		myWindow.document.write(" <p> " + params[i].name + "</p> ");
 		// create IDs to be used for change listener callbacks removing spaces in multi-word names 
 		controllerID = params[i].name.replace(/\s+/g, '') + "_controllerID";
-		//textID   = params[i].name.replace(/\s+/g, '') + "_textID";
+		textID   = params[i].name.replace(/\s+/g, '') + "_textID";
 		
 
 		if (params[i].type === "range") {
@@ -78,7 +78,7 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 			controllerElement = myWindow.document.getElementById(controllerID);
 			
 	
-			controllerElement.change = function(paramfunc) {
+			controllerElement.change = function(i_textID, paramfunc) {
 			// factory  to build a function that depends on the value of textID when the callback is set up, not the value of textID when the callback is called....
 			//IS THIS REQUIRED NOW???
 				var cb = function() { 
@@ -86,11 +86,11 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 					// ---------------  call the setParameter function of the sm
 					paramfunc(sval); // jsbug - w/o parseFloat, when values are whole numbers, they can get passed as strings!!
 					//console.log("about to set the text field " + i_textID + " to " + sval); // executes during callback
-					//myWindow.document.getElementById(i_textID).value = sval;
+					myWindow.document.getElementById(i_textID).value = sval;
 				}
 				//console.log("returning the function to be passed to the event listener, " + cb); // executes during set-up of the callback
 				return cb;
-			}(params[i].f);
+			}(textID, params[i].f);
 			
 			controllerElement.addEventListener('change', controllerElement.change);
 	
