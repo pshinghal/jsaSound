@@ -157,8 +157,7 @@ var jsaFilteredNoiseBandFactory = function() {
 	myInterface.release = function() {
 		now = audioContext.currentTime;
 		stopTime = now + m_releaseTime;
-
-		gainLevelNode.gain.linearRampToValueAtTime(0, stopTime); 
+		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime); 
 	};
 	//--------------------------------------------------------------------------------
 	// Other methods for the interface

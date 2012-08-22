@@ -71,7 +71,7 @@ var oscFactory = function(){
 		oscNode.connect( gainEnvNode );
 		gainEnvNode.connect( gainLevelNode );
 		gainLevelNode.connect( audioContext.destination );
-	}();
+	};
 
 	// define the PUBLIC INTERFACE for the model	
 	var myInterface = baseSM(); 	
@@ -83,7 +83,7 @@ var oscFactory = function(){
 		// Don't need to do this if decay on previous decay is still alive...   
 		if (stopTime <= now){ // not playing
 			console.log("rebuild model node architecture!");
-			//buildModelArchitecture();
+			buildModelArchitecture();
 			oscNode.noteOn(now);
 			gainEnvNode.gain.value = 0;
 		} else {  // no need to recreate architectre - the old one still exists since it is playing
