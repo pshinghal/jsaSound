@@ -119,9 +119,9 @@ function makeSliderBox(i_sm) {  // argument is a sound model
 			controllerElement = myWindow.document.getElementById(controllerID);
 			controllerButton = myWindow.document.getElementById(controllerID + "_button");
 			controllerElement.change = function(paramfunc) {
-				var cb = function() 
+				var cb = function(){
 					//SHOULD ANY PROCESSING BE DONE HERE???					
-					console.log("Calling function with value = " + controllerElement.value);
+					//console.log("Calling function with value = " + controllerElement.value);
 					paramfunc(controllerElement.value);
 				}
 				return cb;
