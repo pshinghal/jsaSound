@@ -12,10 +12,10 @@ Author: Lonce Wyse
 Date: July 2012
 */
 /* #INCLUDE
-components/jsaAudioComponents.js
+jsaComponents/jsaAudioComponents.js
     for baseSM 
 	
-models/jsaSimpleNoiseTick2.js
+jsaModels/jsaSimpleNoiseTick2.js
      for jsaSimpleNoiseTickFactory2
 	 
 */

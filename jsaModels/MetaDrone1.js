@@ -8,13 +8,13 @@ This library is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
 /* #INCLUDE
-components/jsaAudioComponents.js
+jsaComponents/jsaAudioComponents.js
     for baseSM and fmodOscFactory
 
 noisyFM.js
 	for noisyFMFactory()
 	
-utils/utils.js
+jsaUtils/utils.js
 	for Array.prototype.prettyString 
 */
 
