@@ -7,7 +7,7 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-function mp3Factory() {
+function granularMp3Factory() {
 	
 	//Useful addition:
 	//When the file finishes playing, change release time to 0;
@@ -26,9 +26,18 @@ function mp3Factory() {
 	var m_gainLevel = 0.5;
 	var m_attackTime = 0.05;
 	var m_releaseTime = 1.0;
-	var m_soundUrl = "";
+	var m_soundUrl = "";//"./sounds/schumannLotusFlower.mp3";
+	var m_grainSize = 0.09;
+	var m_speed = 1.0;
 	var stopTime = 0.0;
 	var now = 0.0;
+
+	var bufferDuration = 1.0; //This is a very irrelevant figure at this point
+	var realTime = 0.0;
+	var grainTime = 0.0;
+	var speed = m_speed;
+
+	var continuePlaying = true;
 	
 	var myInterface = baseSM();
 
@@ -43,7 +52,8 @@ function mp3Factory() {
 			console.log("Sound(s) loaded");
 			soundBuff = audioContext.createBuffer(xhr.response, false);
 			buffLoaded = true;
-			console.log("Buffer Loaded!");
+			bufferDuration = buffer.duration;
+			console.log("Buffer loaded with duration " + bufferDuration);
 			
 			//SHOULD THIS FUNCTION BE CALLED BEFORE CHANGING buffLoaded ???
 			buildModelArchitecture();
@@ -52,29 +62,65 @@ function mp3Factory() {
 	}
 
 	function buildModelArchitecture() {
-		sourceNode = audioContext.createBufferSource();
+		//sourceNode = audioContext.createBufferSource();
 		gainEnvNode = audioContext.createGainNode();
 		gainLevelNode = audioContext.createGainNode();
 
-		sourceNode.buffer = soundBuff;
-		sourceNode.loop = true;
+		//sourceNode.buffer = soundBuff;
+		//sourceNode.loop = true;
+		// Looping is to be thought of quite differently in Granular synthesis
 		gainLevelNode.gain.value = m_gainLevel;
 		gainEnvNode.gain.value = 0;
 
-		sourceNode.connect(gainEnvNode);
+		//sourceNode.connect(gainEnvNode);
 		gainEnvNode.connect(gainLevelNode);
 		gainLevelNode.connect(audioContext.destination);
 
 		architectureBuilt = true;
 	}
 
+	function scheduleGrain() {
+		var source = context.createBufferSource();
+		source.buffer = buffer;
+		source.connect(gainEnvNode);
+
+		source.noteGrainOn(realTime, grainTime, grainDuration);
+
+		realTime += grainSpacing;
+		grainTime += grainSpacing * speed;
+
+		if (grainTime > bufferDuration) grainTime = 0.0;
+		if (grainTime < 0.0) grainTime += bufferDuration; // Not Sure why
+	}
+
+	function stopScheduler() {
+		continuePlaying = false;
+	}
+
+	function schedule() {
+		if(!continuePlaying)
+			return;
+
+		var currentTime = context.currentTime;
+
+		while (realTime < currentTime + 0.100) {
+			scheduleGrain();
+		}
+
+		setTimeout(schedule, 20);
+	}
+
 	myInterface.play = function(i_gain) {
 		if (buffLoaded) {
 			now = audioContext.currentTime;
+			// TODO: See is we can remove this whole stopTime condition
 			if (stopTime <= now) {
 				console.log("rebuilding");
 				buildModelArchitecture();
-				sourceNode.noteOn(now);
+				//sourceNode.noteOn(now);
+				realTime = context.currentTime;
+				continuePlaying = true;
+				schedule();
 				gainEnvNode.gain.value = 0;
 			} else {
 				console.log("NOT re-building");
@@ -106,6 +152,34 @@ function mp3Factory() {
 		},
 		function(i_val) {
 			gainLevelNode.gain.value = m_gainLevel = i_val;
+		}
+	);
+
+	myInterface.setSpeed = myInterface.registerParam(
+		"Speed",
+		"range",
+		{
+			"min": 0,
+			"max": 1,
+			"val": m_speed
+		},
+		function(i_val) {
+			speed = m_speed = i_val;
+		}
+	);
+
+	myInterface.setGrainSize = myInterface.registerParam(
+		"Grain Size",
+		"range",
+		{
+			"min": 0.010,
+			"max": 0.5,
+			"val": m_grainSize
+		},
+		function(i_val) {
+			m_grainSize = i_val;
+			grainDuration = m_grainSize;
+			grainSpacing = 0.25 * grainDuration;
 		}
 	);
 
@@ -153,7 +227,8 @@ function mp3Factory() {
 		stopTime = now + m_releaseTime;
 
 		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
-		sourceNode.noteOff(stopTime);
+		//sourceNode.noteOff(stopTime);
+		setTimeout(stopScheduler, m_releaseTime);
 		architectureBuilt = false; //probably
 	};
 
