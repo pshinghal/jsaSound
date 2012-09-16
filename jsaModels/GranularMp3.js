@@ -52,7 +52,7 @@ function granularMp3Factory() {
 			console.log("Sound(s) loaded");
 			soundBuff = audioContext.createBuffer(xhr.response, false);
 			buffLoaded = true;
-			bufferDuration = buffer.duration;
+			bufferDuration = soundBuff.duration;
 			console.log("Buffer loaded with duration " + bufferDuration);
 			
 			//SHOULD THIS FUNCTION BE CALLED BEFORE CHANGING buffLoaded ???
@@ -81,7 +81,7 @@ function granularMp3Factory() {
 
 	function scheduleGrain() {
 		var source = context.createBufferSource();
-		source.buffer = buffer;
+		source.buffer = soundBuff;
 		source.connect(gainEnvNode);
 
 		source.noteGrainOn(realTime, grainTime, grainDuration);
