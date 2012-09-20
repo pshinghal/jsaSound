@@ -16,6 +16,8 @@ function granularMp3Factory() {
 
 	//CUrrently, I've just enabled looping to overcome that problem
 
+	var tempNum = 0;
+
 	var buffLoaded = false, architectureBuilt = false;
 
 	var xhr = new XMLHttpRequest();
@@ -35,6 +37,8 @@ function granularMp3Factory() {
 	var bufferDuration = 1.0; //This is a very irrelevant figure at this point
 	var realTime = 0.0;
 	var grainTime = 0.0;
+	var grainDuration = 0.0;
+	var grainSpacing = 0.0;
 	var speed = m_speed;
 
 	var continuePlaying = true;
@@ -77,14 +81,20 @@ function granularMp3Factory() {
 		gainLevelNode.connect(audioContext.destination);
 
 		architectureBuilt = true;
+
+		console.log("architecture built");
 	}
 
 	function scheduleGrain() {
-		var source = context.createBufferSource();
+		//console.log("scheduleGrain triggered");
+		var source = audioContext.createBufferSource();
+		//console.log("source created");
 		source.buffer = soundBuff;
+		//console.log("soundBuff created");
 		source.connect(gainEnvNode);
-
+		//console.log("before noteGrainOn");
 		source.noteGrainOn(realTime, grainTime, grainDuration);
+		//console.log("noteGrainOn triggered");
 
 		realTime += grainSpacing;
 		grainTime += grainSpacing * speed;
@@ -98,14 +108,17 @@ function granularMp3Factory() {
 	}
 
 	function schedule() {
+		//console.log("schedule triggered");
 		if(!continuePlaying)
 			return;
 
-		var currentTime = context.currentTime;
+		var currentTime = audioContext.currentTime;
 
 		while (realTime < currentTime + 0.100) {
 			scheduleGrain();
 		}
+
+		console.log(tempNum++);
 
 		setTimeout(schedule, 20);
 	}
@@ -118,8 +131,11 @@ function granularMp3Factory() {
 				console.log("rebuilding");
 				buildModelArchitecture();
 				//sourceNode.noteOn(now);
-				realTime = context.currentTime;
+				console.log("after architecture build");
+				realTime = audioContext.currentTime;
+				console.log("got realTime");
 				continuePlaying = true;
+				console.log("before schedule");
 				schedule();
 				gainEnvNode.gain.value = 0;
 			} else {
@@ -213,7 +229,7 @@ function granularMp3Factory() {
 		"Sound URL",
 		"url",
 		{
-			"val": "http://46.137.211.192/schumannLotusFlower.mp3"
+			"val": "http://localhost/schumannLotusFlower.mp3"
 		},
 		function(i_val) {
 			m_soundUrl = i_val;
@@ -223,6 +239,7 @@ function granularMp3Factory() {
 	);
 
 	myInterface.release = function() {
+		console.log("release triggered");
 		now = audioContext.currentTime;
 		stopTime = now + m_releaseTime;
 
