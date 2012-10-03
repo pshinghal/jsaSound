@@ -32,6 +32,7 @@ function granularMp3Factory() {
 	var m_soundUrl = "";//"./sounds/schumannLotusFlower.mp3";
 	var m_grainSize = 0.9;
 	var m_speed = 1.0;
+	var m_pitch = 0.0;
 
 	var bufferDuration = 1.0; //This is a very irrelevant figure at this point
 	var realTime = 0.0;
@@ -39,6 +40,7 @@ function granularMp3Factory() {
 	var grainDuration = m_grainSize;
 	var grainSpacing = 0.25 * grainDuration;
 	var speed = m_speed;
+	var pitchRate = Math.pow(2.0, m_pitch);
 
 	var grainWindow;
 	var grainWindowLength = 16384;
@@ -89,6 +91,7 @@ function granularMp3Factory() {
 		var source = audioContext.createBufferSource();
 		//console.log("source created");
 		source.buffer = soundBuff;
+		source.playbackRate.value = pitchRate;
 		//console.log("soundBuff created");
 
 		//TODO: See if the problem is being caused by the fact that we aren't creating NEW "gainLevelNode"s
@@ -103,7 +106,7 @@ function granularMp3Factory() {
 		source.noteGrainOn(realTime, grainTime, grainDuration);
 		//console.log("noteGrainOn triggered");
 		grainWindowNode.gain.value = 0.0;
-		grainWindowNode.gain.setValueCurveAtTime(grainWindow, realTime, grainDuration);
+		grainWindowNode.gain.setValueCurveAtTime(grainWindow, realTime, grainDuration / pitchRate);
 
 		realTime += grainSpacing;
 		//console.log(realTime);
@@ -123,7 +126,7 @@ function granularMp3Factory() {
 	}
 
 	function schedule() {
-		//console.log("schedule triggered");
+		console.log("schedule triggered");
 		if (!continuePlaying) {
 			return;
 		}
@@ -150,7 +153,7 @@ function granularMp3Factory() {
 			console.log("got realTime");
 			continuePlaying = true;
 			console.log("before schedule");
-			setTimeout(schedule, 0);
+			setTimeout(schedule, 1);
 
 			gainLevelNode.gain.value = i_gain || m_gainLevel;
 			console.log("Gain set at " + gainLevelNode.gain.value);
@@ -179,7 +182,7 @@ function granularMp3Factory() {
 		"range",
 		{
 			"min": 0,
-			"max": 1,
+			"max": 2,
 			"val": m_speed
 		},
 		function (i_val) {
@@ -199,6 +202,20 @@ function granularMp3Factory() {
 			m_grainSize = i_val;
 			grainDuration = m_grainSize;
 			grainSpacing = 0.25 * grainDuration;
+		}
+	);
+
+	myInterface.setPitch = myInterface.registerParam(
+		"Pitch",
+		"range",
+		{
+			"min": -2.0,
+			"max": 2.0,
+			"val": m_pitch
+		},
+		function (i_val) {
+			m_pitch = i_val;
+			pitchRate = Math.pow(2.0, m_pitch);
 		}
 	);
 
