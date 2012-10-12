@@ -7,8 +7,11 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-function mp3Factory() {
-	
+
+//PARA: config
+//		-audioContext
+//		bigNum
+var jsaMp3Factory = function (config, baseSM) {
 	//Useful addition:
 	//When the file finishes playing, change release time to 0;
 	//otherwise it's confusing: Press release and it will wait for the release time, but won't really DO anything
@@ -29,32 +32,13 @@ function mp3Factory() {
 	var m_soundUrl = "";
 	var stopTime = 0.0;
 	var now = 0.0;
-	
+
 	var myInterface = baseSM();
 
-	function sendXhr() {
-		//SHOULD XHR BE RE-CONSTRUCTED??
-		xhr.open('GET', m_soundUrl, true);
-		xhr.responseType = 'arraybuffer';
-		xhr.onerror = function(e) {
-			console.error(e);
-		};
-		xhr.onload = function() {
-			console.log("Sound(s) loaded");
-			soundBuff = audioContext.createBuffer(xhr.response, false);
-			buffLoaded = true;
-			console.log("Buffer Loaded!");
-			
-			//SHOULD THIS FUNCTION BE CALLED BEFORE CHANGING buffLoaded ???
-			buildModelArchitecture();
-		};
-		xhr.send();
-	}
-
 	function buildModelArchitecture() {
-		sourceNode = audioContext.createBufferSource();
-		gainEnvNode = audioContext.createGainNode();
-		gainLevelNode = audioContext.createGainNode();
+		sourceNode = config.audioContext.createBufferSource();
+		gainEnvNode = config.audioContext.createGainNode();
+		gainLevelNode = config.audioContext.createGainNode();
 
 		sourceNode.buffer = soundBuff;
 		sourceNode.loop = true;
@@ -63,14 +47,32 @@ function mp3Factory() {
 
 		sourceNode.connect(gainEnvNode);
 		gainEnvNode.connect(gainLevelNode);
-		gainLevelNode.connect(audioContext.destination);
+		gainLevelNode.connect(config.audioContext.destination);
 
 		architectureBuilt = true;
 	}
 
-	myInterface.play = function(i_gain) {
+	function sendXhr() {
+		//SHOULD XHR BE RE-CONSTRUCTED??
+		xhr.open('GET', m_soundUrl, true);
+		xhr.responseType = 'arraybuffer';
+		xhr.onerror = function (e) {
+			console.error(e);
+		};
+		xhr.onload = function () {
+			console.log("Sound(s) loaded");
+			soundBuff = config.audioContext.createBuffer(xhr.response, false);
+			buffLoaded = true;
+			console.log("Buffer Loaded!");
+			//SHOULD THIS FUNCTION BE CALLED BEFORE CHANGING buffLoaded ???
+			buildModelArchitecture();
+		};
+		xhr.send();
+	}
+
+	myInterface.play = function (i_gain) {
 		if (buffLoaded) {
-			now = audioContext.currentTime;
+			now = config.audioContext.currentTime;
 			if (stopTime <= now) {
 				console.log("rebuilding");
 				buildModelArchitecture();
@@ -80,13 +82,13 @@ function mp3Factory() {
 				console.log("NOT re-building");
 				gainEnvNode.gain.cancelScheduledValues(now);
 			}
-	
-			stopTime = bigNum;
+
+			stopTime = config.bigNum;
 			sourceNode.noteOff(stopTime);
-			
+
 			gainLevelNode.gain.value = i_gain || m_gainLevel;
 			console.log("Gain set at " + gainLevelNode.gain.value);
-	
+
 			gainEnvNode.gain.setValueAtTime(0, now);
 			gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime);
 		} else {
@@ -104,7 +106,7 @@ function mp3Factory() {
 			"max": 1,
 			"val": m_gainLevel
 		},
-		function(i_val) {
+		function (i_val) {
 			gainLevelNode.gain.value = m_gainLevel = i_val;
 		}
 	);
@@ -117,7 +119,7 @@ function mp3Factory() {
 			"max": 1,
 			"val": m_attackTime
 		},
-		function(i_val) {
+		function (i_val) {
 			m_attackTime = parseFloat(i_val);
 		}
 	);
@@ -130,7 +132,7 @@ function mp3Factory() {
 			"max": 3,
 			"val": m_releaseTime
 		},
-		function(i_val) {
+		function (i_val) {
 			m_releaseTime = parseFloat(i_val);
 		}
 	);
@@ -141,15 +143,15 @@ function mp3Factory() {
 		{
 			"val": "http://46.137.211.192/schumannLotusFlower.mp3"
 		},
-		function(i_val) {
+		function (i_val) {
 			m_soundUrl = i_val;
 			buffLoaded = false;
 			sendXhr();
 		}
 	);
 
-	myInterface.release = function() {
-		now = audioContext.currentTime;
+	myInterface.release = function () {
+		now = config.audioContext.currentTime;
 		stopTime = now + m_releaseTime;
 
 		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
@@ -158,4 +160,4 @@ function mp3Factory() {
 	};
 
 	return myInterface;
-}
+};

@@ -1,0 +1,5 @@
+{
+	"name": "jsaMetaDrone2",
+	"version": 0.1,
+	"requiredModels": ["jsaFilteredNoiseBand"]
+}

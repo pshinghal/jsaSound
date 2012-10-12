@@ -1,0 +1,9 @@
+{
+	"name": "jsaNoisyFM",
+	"version": 0.1,
+	"requiredModels": [],
+	"requiredOpCodes": [
+		"jsaNoiseNode",
+		"jsaFModOsc"
+	]
+}

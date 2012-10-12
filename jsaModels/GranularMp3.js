@@ -7,7 +7,10 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-function granularMp3Factory() {
+
+//PARA: config
+//		-config.audioContext
+function jsaGranularMp3Factory(config, baseSM) {
 
 	//Useful addition:
 	//When the file finishes playing, change release time to 0;
@@ -62,7 +65,7 @@ function granularMp3Factory() {
 		};
 		xhr.onload = function () {
 			console.log("Sound(s) loaded");
-			soundBuff = audioContext.createBuffer(xhr.response, false);
+			soundBuff = config.audioContext.createBuffer(xhr.response, false);
 			buffLoaded = true;
 			bufferDuration = soundBuff.duration;
 			console.log("Buffer loaded with duration " + bufferDuration);
@@ -74,12 +77,12 @@ function granularMp3Factory() {
 	}
 
 	function buildModelArchitecture() {
-		gainLevelNode = audioContext.createGainNode();
+		gainLevelNode = config.audioContext.createGainNode();
 
 		// Looping is to be thought of quite differently in Granular synthesis
 		gainLevelNode.gain.value = m_gainLevel;
 
-		gainLevelNode.connect(audioContext.destination);
+		gainLevelNode.connect(config.audioContext.destination);
 
 		architectureBuilt = true;
 
@@ -88,7 +91,7 @@ function granularMp3Factory() {
 
 	function scheduleGrain() {
 		//console.log("scheduleGrain triggered");
-		var source = audioContext.createBufferSource();
+		var source = config.audioContext.createBufferSource();
 		//console.log("source created");
 		source.buffer = soundBuff;
 		source.playbackRate.value = pitchRate;
@@ -97,7 +100,7 @@ function granularMp3Factory() {
 		//TODO: See if the problem is being caused by the fact that we aren't creating NEW "gainLevelNode"s
 		buildModelArchitecture();
 
-		var grainWindowNode = audioContext.createGainNode();
+		var grainWindowNode = config.audioContext.createGainNode();
 		source.connect(grainWindowNode);
 		grainWindowNode.connect(gainLevelNode);
 
@@ -131,7 +134,7 @@ function granularMp3Factory() {
 			return;
 		}
 
-		var currentTime = audioContext.currentTime;
+		var currentTime = config.audioContext.currentTime;
 
 		//console.log("here");
 
@@ -149,7 +152,7 @@ function granularMp3Factory() {
 
 	myInterface.play = function (i_gain) {
 		if (buffLoaded) {
-			realTime = audioContext.currentTime;
+			realTime = config.audioContext.currentTime;
 			console.log("got realTime");
 			continuePlaying = true;
 			console.log("before schedule");
