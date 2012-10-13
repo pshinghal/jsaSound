@@ -79,9 +79,8 @@ define(
 				// create IDs to be used for change listener callbacks removing spaces in multi - word names
 				//console.log("param length " + params.length);
 				//console.log("params of " + i + " is " + params[i].name + " of type " + typeof params[i].name);
-				controllerID = params[i].name.replace(/\s +/g, '') + "_controllerID";
-				textID   = params[i].name.replace(/\s +/g, '') + "_textID";
-
+				controllerID = params[i].name.replace(/\s+/g, '') + "_controllerID";
+				textID   = params[i].name.replace(/\s+/g, '') + "_textID";
 
 				if (params[i].type === "range") {
 
