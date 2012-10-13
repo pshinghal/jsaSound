@@ -13,36 +13,41 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //PARA: config
 //		-audioContext
 //		-k_bufferLength
-var noiseNodeFactory = function (config) {
-	var noiseSource = config.audioContext.createJavaScriptNode(config.k_bufferLength, 1, 1);
-	var w = 1; // for gaussian noise, this is the standard deviation, for white, this is the max absolute value
-	var noisetype = "gaussian";
-	noiseSource.onaudioprocess = function (e) {
-		var outBuffer = e.outputBuffer.getChannelData(0);
-		var i;
-		if (noisetype === "gaussian") {
-			for (i = 0; i < config.k_bufferLength; i += 1) {
-				outBuffer[i] = Math.nrand(0, w); // Math.random() * 2 - 1;
-			}
-		} else {
-			for (i = 0; i < config.k_bufferLength; i += 1) {
-				outBuffer[i] = w * (Math.random() * 2 - 1);
-			}
-		}
-	};
+define(
+	["config", "utils"],
+	function (config, utils) {
+		return function () {
+			var noiseSource = config.audioContext.createJavaScriptNode(config.k_bufferLength, 1, 1);
+			var w = 1; // for gaussian noise, this is the standard deviation, for white, this is the max absolute value
+			var noisetype = "gaussian";
+			noiseSource.onaudioprocess = function (e) {
+				var outBuffer = e.outputBuffer.getChannelData(0);
+				var i;
+				if (noisetype === "gaussian") {
+					for (i = 0; i < config.k_bufferLength; i += 1) {
+						outBuffer[i] = utils.nrand(0, w); // Math.random() * 2 - 1;
+					}
+				} else {
+					for (i = 0; i < config.k_bufferLength; i += 1) {
+						outBuffer[i] = w * (Math.random() * 2 - 1);
+					}
+				}
+			};
 
-	noiseSource.setWidth = function (i_index) {
-		w = i_index;
-	};
+			noiseSource.setWidth = function (i_index) {
+				w = i_index;
+			};
 
-	noiseSource.setType = function (i_type) {
-		//TODO: Check whether this is the right condition
-		//		This IS what it was evaluated to earlier
-		if ((i_type !== "gaussian") || (i_type === "white")) {
-			console.log("invalid noise type");
-		}
-		noisetype = i_type;
-	};
+			noiseSource.setType = function (i_type) {
+				//TODO: Check whether this is the right condition
+				//		This IS what it was evaluated to earlier
+				if ((i_type !== "gaussian") || (i_type === "white")) {
+					console.log("invalid noise type");
+				}
+				noisetype = i_type;
+			};
 
-	return noiseSource;
-};
+			return noiseSource;
+		};
+	}
+);

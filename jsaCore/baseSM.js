@@ -11,49 +11,54 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //==============================================================================
 // The sound model base class that all models use as a prototype
 //==============================================================================
-var baseSM = function () {
-	var paramList = [];
-	var p; // a temporary parameter used in setParamNorm to point to one of the registered parameter info structures
+define(
+	function () {
+		return function () {
+			console.log("baseSM constructor called");
+			var paramList = [];
+			var p; // a temporary parameter used in setParamNorm to point to one of the registered parameter info structures
 
-	var bsmInterface = {};
+			var bsmInterface = {};
 
-	// This cannot be "private" because the inhereters need it - too bad it cannot be hidden from the users!!
-	// i_name = String
-	// i_val = Object of values
-	// i_f = function
-	bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
-		var a = {
-			"name": i_name,
-			"type": i_type,
-			"value": i_val,
-			"f": i_f
+			// This cannot be "private" because the inhereters need it - too bad it cannot be hidden from the users!!
+			// i_name = String
+			// i_val = Object of values
+			// i_f = function
+			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
+				var a = {
+					"name": i_name,
+					"type": i_type,
+					"value": i_val,
+					"f": i_f
+				};
+				//console.log("array of args is " + a.prettyString());
+				paramList[paramList.length] = a;
+				return i_f;
+			};
+
+			bsmInterface.getParamList = function () {
+				return paramList;
+			};
+
+			//TODO: Find a way to extend this functionality to Non-range parameters
+			bsmInterface.setRangeParamNorm = function (i_pID, i_val) {
+				if (i_pID < paramList.length) {
+					p = paramList[i_pID];
+					p.f(p.value.min + i_val * (p.value.max - p.value.min));
+				}
+			};
+
+			// all sound models need to have these methods
+			bsmInterface.play = function () {
+				console.log("baseSM.play() should probably be overriden ");
+			};
+			bsmInterface.release = function () {
+				console.log("baseSM.release() should probably be overriden ");
+			};
+			bsmInterface.stop = function () {
+				console.log("baseSM.stop() should probably be overriden ");
+			};
+			return bsmInterface;
 		};
-		//console.log("array of args is " + a.prettyString());
-		paramList[paramList.length] = a;
-		return i_f;
-	};
-
-	bsmInterface.getParamList = function () {
-		return paramList;
-	};
-
-	//TODO: Find a way to extend this functionality to Non-range parameters
-	bsmInterface.setRangeParamNorm = function (i_pID, i_val) {
-		if (i_pID < paramList.length) {
-			p = paramList[i_pID];
-			p.f(p.value.min + i_val * (p.value.max - p.value.min));
-		}
-	};
-
-	// all sound models need to have these methods
-	bsmInterface.play = function () {
-		console.log("baseSM.play() should probably be overriden ");
-	};
-	bsmInterface.release = function () {
-		console.log("baseSM.release() should probably be overriden ");
-	};
-	bsmInterface.stop = function () {
-		console.log("baseSM.stop() should probably be overriden ");
-	};
-	return bsmInterface;
-};
+	}
+);

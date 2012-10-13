@@ -20,96 +20,101 @@ jsaUtils/utils.js
 ******************************************************************************************************
 */
 
-var jsaSimpleNoiseTick2Factory = function (config, baseSM, noiseNodeFactory) {
-	var m_attack = 0.002;
-	var m_sustain = 0.01;
-	var m_release = 0.002;
-	var m_gain = 0.40;
+define(
+	["config", "baseSM", "opCodes/jsaNoiseNode"],
+	function (config, baseSM, noiseNodeFactory) {
+		return function () {
+			var m_attack = 0.002;
+			var m_sustain = 0.01;
+			var m_release = 0.002;
+			var m_gain = 0.40;
 
-	var stopTime = 0.0;        // will be > audioContext.currentTime if playing
-	var now;
-	//var val;
+			var stopTime = 0.0;        // will be > audioContext.currentTime if playing
+			var now;
+			//var val;
 
-	var noiseNode = noiseNodeFactory();
-	var	gainEnvNode = config.audioContext.createGainNode();
+			var noiseNode = noiseNodeFactory();
+			var	gainEnvNode = config.audioContext.createGainNode();
 
-	noiseNode.connect(gainEnvNode);
-	gainEnvNode.gain.setValueAtTime(0, 0);
-	gainEnvNode.connect(config.audioContext.destination);
+			noiseNode.connect(gainEnvNode);
+			gainEnvNode.gain.setValueAtTime(0, 0);
+			gainEnvNode.connect(config.audioContext.destination);
 
-	var myInterface = baseSM();
+			var myInterface = baseSM();
 
-	myInterface.play = function (i_gain) {
-		myInterface.qplay(0, i_gain);
-	};
+			myInterface.play = function (i_gain) {
+				myInterface.qplay(0, i_gain);
+			};
 
-	myInterface.qplay = function (i_ptime, i_gain) {
-		now = config.audioContext.currentTime;
-		var ptime = Math.max(now, i_ptime || now);
+			myInterface.qplay = function (i_ptime, i_gain) {
+				now = config.audioContext.currentTime;
+				var ptime = Math.max(now, i_ptime || now);
 
-		gainEnvNode.gain.cancelScheduledValues(ptime);
-		// The model turns itself off after a fixed amount of time	
-		stopTime = ptime + m_attack + m_sustain + m_release;
+				gainEnvNode.gain.cancelScheduledValues(ptime);
+				// The model turns itself off after a fixed amount of time	
+				stopTime = ptime + m_attack + m_sustain + m_release;
 
-		// Generate the "event"
-		gainEnvNode.gain.setValueAtTime(0, ptime);
-		gainEnvNode.gain.linearRampToValueAtTime(m_gain, ptime + m_attack);
-		gainEnvNode.gain.linearRampToValueAtTime(m_gain, ptime + m_attack + m_sustain);
-		gainEnvNode.gain.linearRampToValueAtTime(0, ptime + m_attack + m_sustain + m_release);
-	};
+				// Generate the "event"
+				gainEnvNode.gain.setValueAtTime(0, ptime);
+				gainEnvNode.gain.linearRampToValueAtTime(m_gain, ptime + m_attack);
+				gainEnvNode.gain.linearRampToValueAtTime(m_gain, ptime + m_attack + m_sustain);
+				gainEnvNode.gain.linearRampToValueAtTime(0, ptime + m_attack + m_sustain + m_release);
+			};
 
-	myInterface.setGain = myInterface.registerParam(
-		"Gain",
-		"range",
-		{
-			"min": 0,
-			"max": 1,
-			"val": m_gain
-		},
-		function (i_val) {
-			m_gain = parseFloat(i_val);
-		}
-	);
+			myInterface.setGain = myInterface.registerParam(
+				"Gain",
+				"range",
+				{
+					"min": 0,
+					"max": 1,
+					"val": m_gain
+				},
+				function (i_val) {
+					m_gain = parseFloat(i_val);
+				}
+			);
 
-	myInterface.setAttackTime = myInterface.registerParam(
-		"Attack Time",
-		"range",
-		{
-			"min": 0,
-			"max": 1,
-			"val": m_attack
-		},
-		function (i_val) {
-			m_attack = parseFloat(i_val);  // javascript makes me cry ....
-		}
-	);
+			myInterface.setAttackTime = myInterface.registerParam(
+				"Attack Time",
+				"range",
+				{
+					"min": 0,
+					"max": 1,
+					"val": m_attack
+				},
+				function (i_val) {
+					m_attack = parseFloat(i_val);  // javascript makes me cry ....
+				}
+			);
 
-	myInterface.setSustainTime = myInterface.registerParam(
-		"Sustain Time",
-		"range",
-		{
-			"min": 0,
-			"max": 3,
-			"val": m_sustain
-		},
-		function (i_val) {
-			m_sustain = parseFloat(i_val); // javascript makes me cry ....
-		}
-	);
+			myInterface.setSustainTime = myInterface.registerParam(
+				"Sustain Time",
+				"range",
+				{
+					"min": 0,
+					"max": 3,
+					"val": m_sustain
+				},
+				function (i_val) {
+					m_sustain = parseFloat(i_val); // javascript makes me cry ....
+				}
+			);
 
-	myInterface.setReleaseTime = myInterface.registerParam(
-		"Release Time",
-		"range",
-		{
-			"min": 0,
-			"max": 3,
-			"val": m_release
-		},
-		function (i_val) {
-			m_release = parseFloat(i_val); // javascript makes me cry ....
-		}
-	);
+			myInterface.setReleaseTime = myInterface.registerParam(
+				"Release Time",
+				"range",
+				{
+					"min": 0,
+					"max": 3,
+					"val": m_release
+				},
+				function (i_val) {
+					m_release = parseFloat(i_val); // javascript makes me cry ....
+				}
+			);
 
-	//console.log("paramlist = " + myInterface.getParamList().prettySstring());					
-	return myInterface;
-};
+			//console.log("paramlist = " + myInterface.getParamList().prettySstring());					
+			return myInterface;
+		};
+	}
+);

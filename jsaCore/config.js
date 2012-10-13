@@ -9,12 +9,19 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 ------------------------------------------------------------------------------------------*/
 //TODO: Convert this into an object-returner
 // All sound models need an audioContext
-if (!window.webkitAudioContext) {
-	alert("Web Audio API is not supported. Try Chrome!");
-} else {
-	// This file of code needs an instantiated webkitAudioContext in order to load, so we can't wait for the
-	// html window to be loaded before creating audioContext even though it might cause errors if WebAudio isn't supported. 
-	var audioContext = new webkitAudioContext();
-	var bigNum = 10000000000.0;// Infinity;  
-	var k_bufferLength = 1024;// What is the right way to set the so that all nodes agree?
-}
+
+define(
+	function () {
+		if (!window.webkitAudioContext) {
+			alert("Web Audio API is not supported. Try Chrome!");
+			return;
+		}
+		// This file of code needs an instantiated webkitAudioContext in order to load, so we can't wait for the
+		// html window to be loaded before creating audioContext even though it might cause errors if WebAudio isn't supported. 
+		var exports = {};
+		exports.audioContext = new webkitAudioContext();
+		exports.bigNum = 10000000000.0;// Infinity;  
+		exports.k_bufferLength = 1024;// What is the right way to set the so that all nodes agree?
+		return exports;
+	}
+);

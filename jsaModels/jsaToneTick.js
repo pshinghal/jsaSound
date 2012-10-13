@@ -42,141 +42,146 @@ jsaUtils/utils.js
 // The attack and decay have weirdnesses - I *think* I am doing it correctly, so I blame webaudio beta and Canary....
 // The attack and decaya
 // ******************************************************************************************************
-var jsaToneTickFactory = function (config, baseSM) {
-	// defined outside "oscInterface" so that they can't be seen be the user of the sound models.
-	// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
-	var	oscNode = config.audioContext.createOscillator();
-	var	gainEnvNode = config.audioContext.createGainNode();
-	var	gainLevelNode = config.audioContext.createGainNode();
+define(
+	["config", "baseSM"],
+	function (config, baseSM) {
+		return function () {
+			// defined outside "oscInterface" so that they can't be seen be the user of the sound models.
+			// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
+			var	oscNode = config.audioContext.createOscillator();
+			var	gainEnvNode = config.audioContext.createGainNode();
+			var	gainLevelNode = config.audioContext.createGainNode();
 
-	// these are both defaults for setting up initial values (and displays) but also a way of remembring across the tragic short lifetime of Nodes.
-	var m_gainLevel = 0.5;    // the point to (or from) which gainEnvNode ramps glide
-	var m_frequency = 440;   // 
-	var m_attackTime = 0.02;  //
-	var m_sustainTime = 0.1;
-	var m_releaseTime = 0.2;	   //
-	var stopTime = 0.0;        // will be > config.audioContext.currentTime if playing
-	var now = 0.0;
+			// these are both defaults for setting up initial values (and displays) but also a way of remembring across the tragic short lifetime of Nodes.
+			var m_gainLevel = 0.5;    // the point to (or from) which gainEnvNode ramps glide
+			var m_frequency = 440;   // 
+			var m_attackTime = 0.02;  //
+			var m_sustainTime = 0.1;
+			var m_releaseTime = 0.2;	   //
+			var stopTime = 0.0;        // will be > config.audioContext.currentTime if playing
+			var now = 0.0;
 
-	// (Re)create the nodes and thier connections.
-	// Must be called everytime we want to start playing since nodes are *deleted* when they aren't being used.
-	var buildModelArchitecture = function () {
-		// These must be called on every play because of the tragically short lifetime ... however, after the 
-		// they have actally been completely deleted - a reference to gainLevelNode, for example, still returns [object AudioGainNode] 
-		oscNode = config.audioContext.createOscillator();
-		gainEnvNode = config.audioContext.createGainNode();
-		gainLevelNode = config.audioContext.createGainNode();
+			// (Re)create the nodes and thier connections.
+			// Must be called everytime we want to start playing since nodes are *deleted* when they aren't being used.
+			var buildModelArchitecture = function () {
+				// These must be called on every play because of the tragically short lifetime ... however, after the 
+				// they have actally been completely deleted - a reference to gainLevelNode, for example, still returns [object AudioGainNode] 
+				oscNode = config.audioContext.createOscillator();
+				gainEnvNode = config.audioContext.createGainNode();
+				gainLevelNode = config.audioContext.createGainNode();
 
-		gainLevelNode.gain.value = m_gainLevel;
-		gainEnvNode.gain.value = 0;
-		oscNode.type = 1;  //square
+				gainLevelNode.gain.value = m_gainLevel;
+				gainEnvNode.gain.value = 0;
+				oscNode.type = 1;  //square
 
-		// make the graph connections
-		oscNode.connect(gainEnvNode);
-		gainEnvNode.connect(gainLevelNode);
-		gainLevelNode.connect(config.audioContext.destination);
-	};
+				// make the graph connections
+				oscNode.connect(gainEnvNode);
+				gainEnvNode.connect(gainLevelNode);
+				gainLevelNode.connect(config.audioContext.destination);
+			};
 
-	var myInterface = baseSM();
+			var myInterface = baseSM();
 
-	myInterface.play = function (i_freq, i_gain) {
-		now = config.audioContext.currentTime;
-		//console.log("PLAY! time = " + now);
-		// It seems silly have to CREATE these nodes & connections every time play() is called. Why can't I do it once (outside of "myInterface")??
-		// Don't need to do this if decay on previous decay is still alive...   
-		if (stopTime <= now) { // not playing
-			console.log("rebuild model node architecture!");
-			buildModelArchitecture();
-			oscNode.noteOn(now);
-			gainEnvNode.gain.value = 0;
-		} else {  // no need to recreate architectre - the old one still exists since it is playing
-			//foo = (stopTime <= now);
-			//console.log("stopTime <= now)  === " + foo);
-			console.log(" ... NOT building architecure because stopTime (" + stopTime + ") is greater than now (" + now + ")");
-		}
-		gainEnvNode.gain.cancelScheduledValues(now);
-		// The model turns itself off after a fixed amount of time	
-		stopTime = now + m_attackTime + m_sustainTime + m_releaseTime;
-		oscNode.noteOff(stopTime);  // "cancels" any previously set future stops, I think
+			myInterface.play = function (i_freq, i_gain) {
+				now = config.audioContext.currentTime;
+				//console.log("PLAY! time = " + now);
+				// It seems silly have to CREATE these nodes & connections every time play() is called. Why can't I do it once (outside of "myInterface")??
+				// Don't need to do this if decay on previous decay is still alive...   
+				if (stopTime <= now) { // not playing
+					console.log("rebuild model node architecture!");
+					buildModelArchitecture();
+					oscNode.noteOn(now);
+					gainEnvNode.gain.value = 0;
+				} else {  // no need to recreate architectre - the old one still exists since it is playing
+					//foo = (stopTime <= now);
+					//console.log("stopTime <= now)  === " + foo);
+					console.log(" ... NOT building architecure because stopTime (" + stopTime + ") is greater than now (" + now + ")");
+				}
+				gainEnvNode.gain.cancelScheduledValues(now);
+				// The model turns itself off after a fixed amount of time	
+				stopTime = now + m_attackTime + m_sustainTime + m_releaseTime;
+				oscNode.noteOff(stopTime);  // "cancels" any previously set future stops, I think
 
-		// if no input, remember from last time set
-		oscNode.frequency.value = i_freq || m_frequency;
-		gainLevelNode.gain.value = i_gain || m_gainLevel;
+				// if no input, remember from last time set
+				oscNode.frequency.value = i_freq || m_frequency;
+				gainLevelNode.gain.value = i_gain || m_gainLevel;
 
-		// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
-		gainEnvNode.gain.setValueAtTime(0, now);
-		gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
-		gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime + m_sustainTime);
-		gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
-	};
+				// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
+				gainEnvNode.gain.setValueAtTime(0, now);
+				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
+				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime + m_sustainTime);
+				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
+			};
 
-	myInterface.setFreq = myInterface.registerParam(
-		"Frequency",
-		"range",
-		{
-			"min": 200,
-			"max": 1000,
-			"val": m_frequency
-		},
-		function (i_freq) {
-			//console.log("in sm.setFreq, oscNode = " + oscNode);
-			oscNode.frequency.value = m_frequency = i_freq;
-		}
-	);
+			myInterface.setFreq = myInterface.registerParam(
+				"Frequency",
+				"range",
+				{
+					"min": 200,
+					"max": 1000,
+					"val": m_frequency
+				},
+				function (i_freq) {
+					//console.log("in sm.setFreq, oscNode = " + oscNode);
+					oscNode.frequency.value = m_frequency = i_freq;
+				}
+			);
 
-	myInterface.setGain = myInterface.registerParam(
-		"Gain",
-		"range",
-		{
-			"min": 0,
-			"max": 1,
-			"val": m_gainLevel
-		},
-		function (i_val) {
-			//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
-			gainLevelNode.gain.value = m_gainLevel = i_val;
-		}
-	);
+			myInterface.setGain = myInterface.registerParam(
+				"Gain",
+				"range",
+				{
+					"min": 0,
+					"max": 1,
+					"val": m_gainLevel
+				},
+				function (i_val) {
+					//console.log("in sm.setGain, gainLevelNode = " + gainLevelNode);
+					gainLevelNode.gain.value = m_gainLevel = i_val;
+				}
+			);
 
-	myInterface.setAttackTime = myInterface.registerParam(
-		"Attack Time",
-		"range",
-		{
-			"min": 0,
-			"max": 1,
-			"val": m_attackTime
-		},
-		function (i_val) {
-			m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
-		}
-	);
+			myInterface.setAttackTime = myInterface.registerParam(
+				"Attack Time",
+				"range",
+				{
+					"min": 0,
+					"max": 1,
+					"val": m_attackTime
+				},
+				function (i_val) {
+					m_attackTime = parseFloat(i_val);  // javascript makes me cry ....
+				}
+			);
 
-	myInterface.setSustainTime = myInterface.registerParam(
-		"Sustain Time",
-		"range",
-		{
-			"min": 0,
-			"max": 3,
-			"val": m_sustainTime
-		},
-		function (i_val) {
-			m_sustainTime = parseFloat(i_val); // javascript makes me cry ....
-		}
-	);
+			myInterface.setSustainTime = myInterface.registerParam(
+				"Sustain Time",
+				"range",
+				{
+					"min": 0,
+					"max": 3,
+					"val": m_sustainTime
+				},
+				function (i_val) {
+					m_sustainTime = parseFloat(i_val); // javascript makes me cry ....
+				}
+			);
 
-	myInterface.setReleaseTime = myInterface.registerParam(
-		"Release Time",
-		"range",
-		{
-			"min": 0,
-			"max": 3,
-			"val": m_releaseTime
-		},
-		function (i_val) {
-			m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
-		}
-	);
+			myInterface.setReleaseTime = myInterface.registerParam(
+				"Release Time",
+				"range",
+				{
+					"min": 0,
+					"max": 3,
+					"val": m_releaseTime
+				},
+				function (i_val) {
+					m_releaseTime = parseFloat(i_val); // javascript makes me cry ....
+				}
+			);
 
-	//console.log("paramlist = " + myInterface.getParamList().prettyString());			
-	return myInterface;
-};
+			//console.log("paramlist = " + myInterface.getParamList().prettyString());			
+			return myInterface;
+		};
+	}
+);

@@ -1,5 +1,5 @@
 {
-	"name": "jsaMyFM1",
+	"name": "jsaFM",
 	"version": 0.1,
 	"requiredModels": [],
 	"requiredOpCodes": ["jsaFModOsc"]

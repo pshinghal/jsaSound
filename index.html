@@ -1,4 +1,4 @@
-<!-- /* ---------------------------------------------------------------------------------------
+<!--
 This jsaSound Code is distributed under LGPL 3
 Copyright (C) 2012 National University of Singapore
 Inquiries: director@anclab.org
@@ -6,102 +6,23 @@ Inquiries: director@anclab.org
 This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or any later version.
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
-------------------------------------------------------------------------------------------*/ -->
+-->
 <html>
-<head>
- <!-- ---------------------------------------------------------------------------
-This code demonstrates 
-	a) Using a dynamically created list selector to choose sound jsaModels,
-	b) a dynamically created "Player" to display sliders for sound model parameters
-------------------------------------------------------------------------------- -->   
-
-	<!-- #include files for the sound jsaModels -->
-	<script src="jsaComponents/jsaAudioComponents.js"></script>
-	<script src="jsaUtils/utils.js"></script>
-	<!-- -->
-	
-	<!-- list of sound jsaModels to incude -->
-    <script src="jsaModels/OscTest9.js"></script>
-	<script src="jsaModels/myFM1.js"></script>
-	<script src="jsaModels/noisyFM.js"></script>
-	<script src="jsaModels/MetaDrone1.js"></script>
-	<script src="jsaModels/filteredNoiseBand.js"></script>
-	<script src="jsaModels/MetaDrone2.js"></script>
-	<script src="jsaModels/ToneTick.js"></script>
-	<script src="jsaModels/NoiseTick.js"></script>
-	<script src="jsaModels/SimpleNoiseTick2.js"></script>
-	<script src="jsaModels/PeriodicTrigger2.js"></script>
-	<script src="jsaModels/Mp3.js"></script>
-	<script src="jsaModels/GranularMp3.js"></script>
-	<script src="jsaModels/MicInput.js"></script>
-	<!-- -->
-	
-	<!--  "Player" code -->
-	<script src="jsaComponents/sliderBox.js"></script>
-	
-	<!--Sound loading and management code-->
-	<script type="text/javascript">	
-		var currentSndModel;
-
-		window.addEventListener("load", eventWindowLoaded, false);
-
-		function eventWindowLoaded () {
-
-			console.log("Window Loaded");
-			// create the sound selector box for the web page
-			makeSoundListSelector();
-		}				
-		
-		// Names are arbitrary, makers must be defined in the "#include"ed sound model files above
-		soundList = [{},
-					 {name: "Square Wave", maker: oscFactory},
-					 {name: "Classic FM", maker: jsaFMFactory},
-					 {name: "Noisy FM", maker: jsaNoisyFMFactory},
-					 {name: "UglyMetadrone", maker: jsaMetaDrone1Factory},
-					 {name: "Noise Band", maker: jsaFilteredNoiseBandFactory},
-					 {name: "Metadrone2", maker: jsaMetaDrone2Factory},
-					 {name: "ToneTick", maker: jsaToneTickFactory},
-					 {name: "NoiseTick", maker: jsaNoiseTickFactory},
-					 {name: "Simple Noise Tick 2", maker: jsaSimpleNoiseTickFactory2},
-					 {name: "Period Trigger 2", maker: jsaPeriodicTriggerFactory2},
-					 {name: "Mp3", maker: mp3Factory},
-					 {name: "Granular Mp3", maker: granularMp3Factory},
-					 {name: "Mic Input", maker: jsaMicInputFactory}
-					 ]
-		
-		// Create the html select box using the hard-coded soundList above		
-		function makeSoundListSelector(){
-			var select = document.getElementById("soundList");
-			var foo;
-			for (var i=0; i< soundList.length;i++){
-				foo = soundList[i].name;
-				if (soundList[i].name){
-					select.options[select.options.length] = new Option(soundList[i].name);
-				} else{
-					select.options[select.options.length] = new Option();
-				}					
-			}
-		}
-		
-		// responde to sound selections be loading a sound as the current model
-		function soundChoice() {
-			var sb;
-			var mylist=document.getElementById("soundList");
-			currentSndModel=soundList[mylist.selectedIndex].maker();  
-			sb = makeSliderBox(currentSndModel);
-			console.log("slider box is " + sb + " + and model is " + currentSndModel);
-		}		
-	</script>
-</head>
-<body>
-<h1> Dynamically create model gui with sliders and text boxes for parameters </h1> 
-
-<!-- Here we will dnamically create the sound list for selection -->
-Choose your sound model:
-<select id="soundList" onchange="soundChoice()">
-</select> </br>
-<!-- ---------------------------------------------------------------------------------------- -->
-
-
-</body>
+	<head>
+	 	<!--
+		This code demonstrates 
+		a) Using a dynamically created list selector to choose sound jsaModels,
+		b) a dynamically created "Player" to display sliders for sound model parameters
+		-->
+		<title>jsaSound</title>
+		<meta name="description" content="jsaSound: an interactive sound library">
+		<script type="text/javascript" data-main="scripts/main.js" src="scripts/require.js"></script>
+	</head>
+	<body>
+		<h1> Dynamically create model gui with sliders and text boxes for parameters </h1> 
+		<!-- Here we will dynamically create the sound list for selection -->
+		Choose your sound model:
+		<select id="soundSelector">
+		</select> </br>
+	</body>
 </html>
