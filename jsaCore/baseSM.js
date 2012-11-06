@@ -15,8 +15,7 @@ define(
 	function () {
 		return function () {
 			console.log("baseSM constructor called");
-			var paramList = [];
-			var p; // a temporary parameter used in setParamNorm to point to one of the registered parameter info structures
+			var params = {};
 
 			var bsmInterface = {};
 
@@ -24,31 +23,42 @@ define(
 			// i_name = String
 			// i_val = Object of values
 			// i_f = function
+
+			// Parameters are over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
-				var a = {
-					"name": i_name,
+				var paramObject = {
+					//TODO: confirm:
+					//This is unnecessary as part of the object, and it adds complexity to the usage of the paramName
+					// "name": i_name,
 					"type": i_type,
 					"value": i_val,
 					"f": i_f
 				};
-				//console.log("array of args is " + a.prettyString());
-				paramList[paramList.length] = a;
-				return i_f;
+				params[i_name] = paramObject;
 			};
 
-			bsmInterface.getParamList = function () {
-				return paramList;
+			bsmInterface.getParams = function () {
+				return params;
 			};
 
 			//TODO: Find a way to extend this functionality to Non-range parameters
-			bsmInterface.setRangeParamNorm = function (i_pID, i_val) {
-				if (i_pID < paramList.length) {
-					p = paramList[i_pID];
-					p.f(p.value.min + i_val * (p.value.max - p.value.min));
+			bsmInterface.setRangeParamNorm = function (i_name, i_val) {
+				if (!params[i_name]) {
+					throw "setRangeParamNorm: Parameter " + i_name + " does not exist";
 				}
+				var p = params[i_name];
+				p.f(p.value.min + i_val * (p.value.max - p.value.min));
 			};
 
-			// all sound models need to have these methods
+			bsmInterface.set = function (i_name) {
+				if (!params[i_name]) {
+					throw "set: Parameter " + i_name + " does not exist";
+				}
+
+				return params[i_name].f;
+			};
+
+			// All sound models need to have these methods
 			bsmInterface.play = function () {
 				console.log("baseSM.play() should probably be overriden ");
 			};

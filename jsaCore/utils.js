@@ -74,6 +74,25 @@ define(
 			return x * (27 + x * x) / (27 + 9 * x * x);
 		};
 
+		utils.objForEach = function (object, func) {
+			var i;
+			for (i in object) {
+				if (object.hasOwnProperty(i)) {
+					func(object[i], i);
+				}
+			}
+		};
+
+		utils.objLength = function (object) {
+			var i, count = 0;
+			for (i in object) {
+				if (object.hasOwnProperty(i)) {
+					count += 1;
+				}
+			}
+			return count;
+		};
+
 		return utils;
 	}
 );
