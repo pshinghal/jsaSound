@@ -98,7 +98,7 @@ define(
 
 				// if no input, remember from last time set
 				m_freq = i_freq || m_freq;
-				myInterface.setCenterFreq(m_freq);
+				myInterface.set("Center Frequency", m_freq);
 				gainLevelNode.gain.value = i_gain || m_gainLevel;
 
 				// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
@@ -108,7 +108,7 @@ define(
 				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
 			};
 
-			myInterface.setCenterFreq = myInterface.registerParam(
+			myInterface.registerParam(
 				"Center Frequency",
 				"range",
 				{
@@ -122,7 +122,7 @@ define(
 				}
 			);
 
-			myInterface.setFilterQ = myInterface.registerParam(
+			myInterface.registerParam(
 				"filter Q",
 				"range",
 				{
@@ -136,7 +136,7 @@ define(
 				}
 			);
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -149,7 +149,7 @@ define(
 				}
 			);
 
-			myInterface.setAttackTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Attack Time",
 				"range",
 				{
@@ -162,7 +162,7 @@ define(
 				}
 			);
 
-			myInterface.setReleaseTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Release Time",
 				"range",
 				{

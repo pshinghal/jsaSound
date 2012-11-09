@@ -75,11 +75,10 @@ define(
 			myInterface.release = function () {
 				child.release();
 				eventGenerator.disconnect(); // stop the event generator by disconnecting from audioContext.destination (yuck)
-				//TODO: Change this to something more useful
-				console.log("------------");
+				// console.log("------------[released]");
 			};
 
-			myInterface.setRate = myInterface.registerParam(
+			myInterface.registerParam(
 				"Rate",
 				"range",
 				{
@@ -93,7 +92,7 @@ define(
 				}
 			);
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -103,7 +102,7 @@ define(
 				},
 				function (i_val) {
 					m_gain = parseFloat(i_val);
-					child.setGain(m_gain);
+					child.set("Gain", m_gain);
 				}
 			);
 

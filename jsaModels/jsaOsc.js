@@ -120,7 +120,7 @@ define(
 				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
 			};
 
-			myInterface.setFreq = myInterface.registerParam(
+			myInterface.registerParam(
 				"Frequency",
 				"range",
 				{
@@ -134,7 +134,7 @@ define(
 				}
 			);
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -148,7 +148,7 @@ define(
 				}
 			);
 
-			myInterface.setAttackTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Attack Time",
 				"range",
 				{
@@ -161,7 +161,7 @@ define(
 				}
 			);
 
-			myInterface.setReleaseTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Release Time",
 				"range",
 				{

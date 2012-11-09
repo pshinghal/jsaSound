@@ -27,9 +27,6 @@ define(
 			// Parameters are over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
 				var paramObject = {
-					//TODO: confirm:
-					//This is unnecessary as part of the object, and it adds complexity to the usage of the paramName
-					// "name": i_name,
 					"type": i_type,
 					"value": i_val,
 					"f": i_f
@@ -41,7 +38,6 @@ define(
 				return params;
 			};
 
-			//TODO: Find a way to extend this functionality to Non-range parameters
 			bsmInterface.setRangeParamNorm = function (i_name, i_val) {
 				if (!params[i_name]) {
 					throw "setRangeParamNorm: Parameter " + i_name + " does not exist";
@@ -54,8 +50,11 @@ define(
 				if (!params[i_name]) {
 					throw "set: Parameter " + i_name + " does not exist";
 				}
-
-				return params[i_name].f;
+				var args = [], i;
+				for (i = 1; i < arguments.length; i += 1) {
+					args.push(arguments[i]);
+				}
+				params[i_name].f.apply(this, args);
 			};
 
 			// All sound models need to have these methods

@@ -39,9 +39,7 @@ define(
 			};
 
 			noiseSource.setType = function (i_type) {
-				//TODO: Check whether this is the right condition
-				//		This IS what it was evaluated to earlier
-				if ((i_type !== "gaussian") || (i_type === "white")) {
+				if ((i_type !== "gaussian") && (i_type !== "white")) {
 					console.log("invalid noise type");
 				}
 				noisetype = i_type;

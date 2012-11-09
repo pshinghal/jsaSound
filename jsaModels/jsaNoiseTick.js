@@ -90,7 +90,7 @@ define(
 				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
 			};
 
-			myInterface.setCarFreq = myInterface.registerParam(
+			myInterface.registerParam(
 				"Carrier Frequency",
 				"range",
 				{
@@ -104,7 +104,7 @@ define(
 				}
 			);
 
-			myInterface.setModIndex = myInterface.registerParam(
+			myInterface.registerParam(
 				"Modulation Index",
 				"range",
 				{
@@ -118,7 +118,7 @@ define(
 				}
 			);
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -131,7 +131,7 @@ define(
 				}
 			);
 
-			myInterface.setAttackTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Attack Time",
 				"range",
 				{
@@ -144,7 +144,7 @@ define(
 				}
 			);
 
-			myInterface.setSustainTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Sustain Time",
 				"range",
 				{
@@ -157,7 +157,7 @@ define(
 				}
 			);
 
-			myInterface.setReleaseTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Release Time",
 				"range",
 				{

@@ -86,7 +86,7 @@ define(
 
 				// if no input, remember from last time set
 				m_freq = i_freq || m_freq;
-				myInterface.set("Center Frequency")(m_freq);
+				myInterface.set("Center Frequency", m_freq);
 				gainLevelNode.gain.value = i_gain || m_gainLevel;
 
 				// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
@@ -112,7 +112,7 @@ define(
 			);
 			// ----------------------------------------
 			myInterface.setFilterQ = myInterface.registerParam(
-				"filter Q",
+				"Filter Q",
 				"range",
 				{
 					"min": 0,

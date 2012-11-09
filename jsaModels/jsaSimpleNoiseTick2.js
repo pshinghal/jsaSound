@@ -61,7 +61,7 @@ define(
 				gainEnvNode.gain.linearRampToValueAtTime(0, ptime + m_attack + m_sustain + m_release);
 			};
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -74,7 +74,7 @@ define(
 				}
 			);
 
-			myInterface.setAttackTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Attack Time",
 				"range",
 				{
@@ -87,7 +87,7 @@ define(
 				}
 			);
 
-			myInterface.setSustainTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Sustain Time",
 				"range",
 				{
@@ -100,7 +100,7 @@ define(
 				}
 			);
 
-			myInterface.setReleaseTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Release Time",
 				"range",
 				{

@@ -53,7 +53,7 @@ define(
 			//var init = function(){
 			for (i = 0; i < k_maxNumChildren; i += 1) {
 				childModel[i] = jsaNoisyFMFactory();
-				childModel[i].setModIndex(400);
+				childModel[i].set("Modulation Index", 400);
 				//console.log("creating child # " + i);
 			}
 			//}();
@@ -65,14 +65,6 @@ define(
 				return freq;
 			};
 
-
-			// (Re)create the nodes and thier connections.
-			// Must be called everytime we want to start playing since nodes are *deleted* when they aren't being used.
-			var buildModelArchitecture = function () {
-				// nothing to do in a metamodel.  child.play() will do all the architecture (re)building for the child.
-				// It will be different when all sound models become AudioNodes....
-			};
-
 			// define the PUBLIC INTERFACE for the model	
 			var myInterface = baseSM();
 			// ----------------------------------------
@@ -81,13 +73,6 @@ define(
 				now = config.audioContext.currentTime;
 				stopTime = config.bigNum;
 				//console.log("Drone: PLAY! time = " + now);
-
-				//TODO: Use this block, or remove it
-				// if (stopTime <= now) { // not playing
-					////buildModelArchitecture();
-				// } else {  // no need to recreate architectre - the old one still exists since it is playing
-					////gainEnvNode.gain.cancelScheduledValues( now );
-				// }
 
 				m_baseNote = i_bn || m_baseNote;
 				//console.log("will send play to " + m_currentNumChildrenActive + " currently active children");
@@ -115,7 +100,7 @@ define(
 			// ----------------------------------------
 			//	Parameters 
 			// ----------------------------------------
-			myInterface.setBN = myInterface.registerParam(
+			myInterface.registerParam(
 				"Base Note",
 				"range",
 				{
@@ -133,13 +118,13 @@ define(
 					m_baseNote = in_bn;
 					//console.log("will send new base note to " + m_currentNumChildrenActive + " currently active children");
 					for (i = 0; i < m_currentNumChildrenActive; i += 1) {
-						childModel[i].setCarFreq(note2Freq(m_baseNote));
+						childModel[i].set("Carrier Frequency", note2Freq(m_baseNote));
 					}
 				}
 			);
 
 			// ----------------------------------------		
-			myInterface.setNumGenerators = myInterface.registerParam(
+			myInterface.registerParam(
 				"Number of Generators",
 				"range",
 				{

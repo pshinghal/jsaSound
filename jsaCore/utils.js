@@ -31,12 +31,10 @@ define(
 				"y": canvasY
 			};
 		};
-		//TODO: See if this is REALLY required. Also, can we just separate all prototype mods?
 		HTMLCanvasElement.prototype.relMouseCoords = utils.relMouseCoords;
 
 		//http://www.meredithdodge.com/2012/05/30/a-great-little-javascript-function-for-generating-random-gaussiannormalbell-curve-numbers/
 		// Normally distributed random numbers
-		//TODO: Change this to utils.nrand
 		utils.nrand = function (m, sd) {
 			var x1, x2, rad, y1;
 			do {

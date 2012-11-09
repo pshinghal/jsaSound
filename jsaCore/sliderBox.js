@@ -44,8 +44,6 @@ define(
 			var h = 40 + 100 * numParams; // more sliders, longer window
 
 			// Do it all in a new window
-			//TODO: I don't think this line is still relevant in the new model
-			//if (! (typeof myWindow === 'undefined')) myWindow.close();
 			// close the old and create a new window each time this method is called.
 			var myWindow = {};
 
@@ -100,7 +98,6 @@ define(
 				//TODO: Check if it might be better to separate this as a factory function
 				controllerElement.change = (function (paramfunc) {
 					var cb = function () {
-						//TODO: SHOULD ANY PROCESSING BE DONE HERE???
 						paramfunc(controllerElement.value);
 					};
 					return cb;
@@ -113,7 +110,7 @@ define(
 			function setupParameter(paramObject, paramName) {
 				myWindow.document.write(" <p> " + paramName + "</p> ");
 				// create IDs to be used for change listener callbacks removing spaces in multi - word names
-				//TODO: This 'reduction' of the name can create issues:
+				//TODO LOW: This 'reduction' of the name can create issues:
 				controllerID = paramName.replace(/\s+/g, '') + "_controllerID";
 				textID   = paramName.replace(/\s+/g, '') + "_textID";
 
@@ -170,14 +167,10 @@ define(
 
 			myInterface.play = function () {
 				myWindow.document.getElementById("playbutton_ID").click();
-				//TODO: Is there a reason this is here?
-				void 0;
 			};
 
 			myInterface.release = function () {
 				myWindow.document.getElementById("playbutton_ID").click();
-				//TODO: Or this?
-				void 0;
 			};
 
 		//FIND A NEW WAY TO DO THIS!!!

@@ -57,6 +57,7 @@ define(
 				gainLevelNode.gain.value = m_gainLevel;
 				gainEnvNode.gain.value = 0;
 
+				//This is an opcode. The unified "set" interface is not there for opcodes yet. TODO?
 				m_CarrierNode.setModIndex(m_modIndex);
 
 				// make the graph connections
@@ -87,7 +88,7 @@ define(
 				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
 			};
 
-			myInterface.setCarFreq = myInterface.registerParam(
+			myInterface.registerParam(
 				"Carrier Frequency",
 				"range",
 				{
@@ -101,7 +102,7 @@ define(
 				}
 			);
 
-			myInterface.setModIndex = myInterface.registerParam(
+			myInterface.registerParam(
 				"Modulation Index",
 				"range",
 				{
@@ -115,7 +116,7 @@ define(
 				}
 			);
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -128,7 +129,7 @@ define(
 				}
 			);
 
-			myInterface.setAttackTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Attack Time",
 				"range",
 				{
@@ -141,7 +142,7 @@ define(
 				}
 			);
 
-			myInterface.setReleaseTime = myInterface.registerParam(
+			myInterface.registerParam(
 				"Release Time",
 				"range",
 				{

@@ -169,7 +169,7 @@ define(
 				}
 			};
 
-			myInterface.setGain = myInterface.registerParam(
+			myInterface.registerParam(
 				"Gain",
 				"range",
 				{
@@ -182,7 +182,7 @@ define(
 				}
 			);
 
-			myInterface.setSpeed = myInterface.registerParam(
+			myInterface.registerParam(
 				"Speed",
 				"range",
 				{
@@ -195,7 +195,7 @@ define(
 				}
 			);
 
-			myInterface.setGrainSize = myInterface.registerParam(
+			myInterface.registerParam(
 				"Grain Size",
 				"range",
 				{
@@ -210,7 +210,7 @@ define(
 				}
 			);
 
-			myInterface.setPitch = myInterface.registerParam(
+			myInterface.registerParam(
 				"Pitch",
 				"range",
 				{
@@ -224,7 +224,7 @@ define(
 				}
 			);
 
-		//  myInterface.setAttackTime = myInterface.registerParam(
+		//  myInterface.registerParam(
 		//      "Attack Time",
 		//      "range",
 		//      {
@@ -237,7 +237,7 @@ define(
 		//      }
 		//  );
 
-		//  myInterface.setReleaseTime = myInterface.registerParam(
+		//  myInterface.registerParam(
 		//      "Release Time",
 		//      "range",
 		//      {
@@ -250,7 +250,7 @@ define(
 		//      }
 		//  );
 
-			myInterface.setSoundUrl = myInterface.registerParam(
+			myInterface.registerParam(
 				"Sound URL",
 				"url",
 				{
