@@ -49,7 +49,7 @@ jsaUtils/utils.js
 // The attack and decaya
 // ******************************************************************************************************
 define(
-	["config", "baseSM"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM"],
 	function (config, baseSM) {
 		return function () {
 			console.log("jsaOsc constructor called");

@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //PARA: config
 //		-bigNum
 define(
-	["config"],
+	["jsaSound/jsaCore/config"],
 	function (config) {
 		return function () {
 			if (!config) {

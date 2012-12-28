@@ -32,7 +32,7 @@ jsaUtils/utils.js
 //PARA: utils
 //		-mtof
 define(
-	["config", "baseSM", "utils", "models/jsaFilteredNoiseBand"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaCore/utils", "jsaSound/jsaModels/jsaFilteredNoiseBand"],
 	function (config, baseSM, utils, jsaFilteredNoiseBandFactory) {
 		return function () {
 			var	childModel = [];

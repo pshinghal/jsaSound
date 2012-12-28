@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //		-audioContext
 //		-k_bufferLength
 define(
-	["config"],
+	["jsaSound/jsaCore/config"],
 	function (config) {
 		return function () {
 			var sampleRate = config.audioContext.sampleRate;   // NOT THE RIGHT WAY TO SET THIS - PASS IN AUDIOCONEXT AS ARG???

@@ -12,7 +12,7 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //		-audioContext
 //		bigNum
 define(
-	["config", "baseSM"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM"],
 	function (config, baseSM) {
 		return function () {
 			//Useful addition:

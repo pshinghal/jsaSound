@@ -21,7 +21,7 @@ jsaUtils/utils.js
 */
 
 define(
-	["config", "baseSM", "opCodes/jsaNoiseNode"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaOpCodes/jsaNoiseNode"],
 	function (config, baseSM, noiseNodeFactory) {
 		return function () {
 			var m_attack = 0.002;

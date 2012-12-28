@@ -14,7 +14,7 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 //		-audioContext
 //		-k_bufferLength
 define(
-	["config", "utils"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/utils"],
 	function (config, utils) {
 		return function () {
 			var noiseSource = config.audioContext.createJavaScriptNode(config.k_bufferLength, 1, 1);

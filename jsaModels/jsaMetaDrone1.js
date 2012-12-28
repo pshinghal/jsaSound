@@ -32,7 +32,7 @@ jsaUtils/utils.js
 //		-audioContext
 //		-bigNum
 define(
-	["config", "baseSM", "models/jsaNoisyFM", "utils"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaModels/jsaNoisyFM", "jsaSound/jsaCore/utils"],
 	function (config, baseSM, jsaNoisyFMFactory, utils) {
 		return function () {
 			var	childModel = [];

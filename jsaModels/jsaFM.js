@@ -53,7 +53,7 @@ jsaUtils/utils.js
 //		-audioContext
 //		-bigNum
 define(
-	["config", "baseSM", "opCodes/jsaFModOsc"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaOpCodes/jsaFModOsc"],
 	function (config, baseSM, fmodOscFactory) {
 		return function () {
 			// defined outside "aswFMInterface" so that they can't be seen be the user of the sound models.

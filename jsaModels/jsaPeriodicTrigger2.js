@@ -25,7 +25,7 @@ jsaModels/jsaSimpleNoiseTick2.js
 */
 
 define(
-	["config", "baseSM", "models/jsaSimpleNoiseTick2", "opCodes/jsaEventPhasor"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaModels/jsaSimpleNoiseTick2", "jsaSound/jsaOpCodes/jsaEventPhasor"],
 	function (config, baseSM, jsaSimpleNoiseTick2Factory, jsaEventPhasor) {
 		return function () {
 			var m_futureinterval = 0.05;  // the amount of time to compute events ahead of now

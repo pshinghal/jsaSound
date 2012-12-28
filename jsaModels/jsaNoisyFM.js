@@ -24,7 +24,7 @@ jsaUtils/utils.js
 ******************************************************************************************************
 */
 define(
-	["config", "baseSM", "opCodes/jsaNoiseNode", "opCodes/jsaFModOsc"],
+	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaOpCodes/jsaNoiseNode", "jsaSound/jsaOpCodes/jsaFModOsc"],
 	function (config, baseSM, noiseNodeFactory, fmodOscFactory) {
 		return function () {
 			// defined outside "aswNoisyFMInterface" so that they can't be seen be the user of the sound models.
