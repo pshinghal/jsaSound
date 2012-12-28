@@ -22,7 +22,7 @@ It creates a new window for a "player" GUI with sliders and text boxes to show v
 
 // Create the GUI for sound model interaction and the callbacks for taking action
 define(
-	["baseSM", "utils"],
+	["jsaSound/jsaCore/baseSM", "jsaSound/jsaCore/utils"],
 	function (baseSM, utils) {
 		//console.log("returning sliderBox constructor");
 		return function (i_sm) {  // argument is a sound model

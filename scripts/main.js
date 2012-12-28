@@ -9,16 +9,17 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 */
 require.config({
 	paths: {
-		"core": "../jsaCore",
-		"baseSM": "../jsaCore/baseSM",
-		"models": "../jsaModels",
-		"utils": "../jsaCore/utils",
-		"opCodes": "../jsaOpCodes",
-		"config": "../jsaCore/config"
+		// "core": "../jsaCore",
+		// "baseSM": "../jsaCore/baseSM",
+		// "models": "../jsaModels",
+		// "utils": "../jsaCore/utils",
+		// "opCodes": "../jsaOpCodes",
+		// "config": "../jsaCore/config",
+		"jsaSound": ".."
 	}
 });
 require(
-	["require", "jsaCore/sliderBox"],
+	["require", "jsaSound/jsaCore/sliderBox"],
 	function (require, makeSliderBox) {
 		var currentSndModel;
 		var soundSelectorElem = document.getElementById("soundSelector");
@@ -58,7 +59,7 @@ require(
 			var sb;
 			require(
 				// Get the model
-				["jsaModels/" + soundList[soundSelectorElem.selectedIndex].model],
+				["jsaSound/jsaModels/" + soundList[soundSelectorElem.selectedIndex].model],
 				// And open the sliderBox
 				function (currentSM) {
 					console.log("got model");
