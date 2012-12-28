@@ -21,8 +21,9 @@ define(
 
 			// This cannot be "private" because the inhereters need it - too bad it cannot be hidden from the users!!
 			// i_name = String
+			// i_type = String
 			// i_val = Object of values
-			// i_f = function
+			// i_f = Function
 
 			// Parameters are over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {

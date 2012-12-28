@@ -7,7 +7,6 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-// give the HTMLCanvasElement relative mouse coordinates {[0,1],[0,1]} 
 // args:
 define(
 	function () {
@@ -31,6 +30,7 @@ define(
 				"y": canvasY
 			};
 		};
+		// Give the HTMLCanvasElement relative mouse coordinates {[0,1],[0,1]} 
 		HTMLCanvasElement.prototype.relMouseCoords = utils.relMouseCoords;
 
 		//http://www.meredithdodge.com/2012/05/30/a-great-little-javascript-function-for-generating-random-gaussiannormalbell-curve-numbers/

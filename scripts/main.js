@@ -13,17 +13,18 @@ require.config({
 		"baseSM": "../jsaCore/baseSM",
 		"models": "../jsaModels",
 		"utils": "../jsaCore/utils",
-		"opCodes": "../jsaCore",
+		"opCodes": "../jsaOpCodes",
 		"config": "../jsaCore/config"
 	}
 });
 require(
-	["require", "core/sliderBox"],
+	["require", "jsaCore/sliderBox"],
 	function (require, makeSliderBox) {
 		var currentSndModel;
 		var soundSelectorElem = document.getElementById("soundSelector");
 
-		// Names are arbitrary, makers must be defined in the "#include"ed sound model files above
+		//TODO: Have this auto-load from jsaModels contents (have an "all.json")
+		//TODO: Then pull names from "<model>Data.json"
 		var soundList = [
 			{},
 			{name: "Square Wave", model: "jsaOsc"},
@@ -42,30 +43,23 @@ require(
 		];
 
 		// Create the html select box using the hard-coded soundList above
-		//TODO: Tidy this up
 		function makeSoundListSelector() {
-			var foo;
 			var i;
+			var currOptionName;
 			for (i = 0; i < soundList.length; i += 1) {
-				foo = soundList[i].name;
-				if (soundList[i].name) {
-					soundSelectorElem.options[soundSelectorElem.options.length] = new Option(soundList[i].name);
-				} else {
-					soundSelectorElem.options[soundSelectorElem.options.length] = new Option();
-				}
+				currOptionName = soundList[i].name || "";
+				//Add option to end of list
+				soundSelectorElem.add(new Option(currOptionName));
 			}
 		}
 
-		// responde to sound selections be loading a sound as the current model
+		// When a sound is selected
 		function soundChoice() {
 			var sb;
-			console.log("before requiring model");
-			// currentSndModel = require("models/" + soundList[soundSelectorElem.selectedIndex].model);
-			//console.log("required model");
-			// sb = makeSliderBox(currentSndModel);
-			// console.log("slider box is " + sb + " + and model is " + currentSndModel);
 			require(
-				["models/" + soundList[soundSelectorElem.selectedIndex].model],
+				// Get the model
+				["jsaModels/" + soundList[soundSelectorElem.selectedIndex].model],
+				// And open the sliderBox
 				function (currentSM) {
 					console.log("got model");
 					sb = makeSliderBox(currentSM());
@@ -74,14 +68,9 @@ require(
 			);
 		}
 
-		//TODO: See if this can be used instead of direct call
-		function eventWindowLoaded() {
-			console.log("Window Loaded");
-			console.log("IF YOU CAN SEE THIS, REFER TO TODO ABOVE THE STATEMENT THAT CALLS THIS!!!");
-			// create the sound selector box for the web page
-			makeSoundListSelector();
-		}
+		//TODO: Find non-jQuery browser-agnostic way of doing this AFTER the window is loaded
 		makeSoundListSelector();
+
 		soundSelectorElem.addEventListener("change", soundChoice);
 	}
 );
