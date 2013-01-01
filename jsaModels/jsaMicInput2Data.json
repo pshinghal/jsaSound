@@ -1,0 +1,6 @@
+{
+	"name": "jsaMicInput2",
+	"version": 0.1,
+	"requiredModels": [],
+	"requiredOpCodes": ["noiseNode", "MicInputNode"]
+}

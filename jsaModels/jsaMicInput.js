@@ -7,13 +7,11 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-/* #INCLUDE
-components/jsaAudioComponents.js
- for baseSM and noiseNodeFactory()
-	
-utils/utils.js
-	for Array.prototype.prettyString 
-	
+/* #NOTE
+Some of the sound models use microphone input. These models only work when run on a proper web web server (thought
+one on the localhost will work fine). Also, when the user opens one of these models, the ALLOW/DISALLOW buttons
+show up on the main browser window, not the sound model slider box window so it is easy to miss. If the user
+doesn't push the ALLOW button, the model will not work properly. 
 */
 
 /* --------------------------------------------------------------
@@ -42,9 +40,9 @@ define(
 			var microphone;
 
 			// these are both defaults for setting up initial values (and displays) but also a way of remembring across the tragic short lifetime of Nodes.
-			var m_gainLevel = 0.5, // the point to (or from) which gainEnvNode ramps glide
-				m_freq = 440,
-				m_Q = 150.0,
+			var m_gainLevel = 0.75, // the point to (or from) which gainEnvNode ramps glide
+				m_freq = 750,
+				m_Q = 2,
 				m_attackTime = 0.05,
 				m_releaseTime = 1.0,
 				stopTime = 0.0,	// will be > audioContext.currentTime if playing
@@ -52,18 +50,21 @@ define(
 
 			// (Re)create the nodes and thier connections.
 			var buildModelArchitecture = (function () {
-				// These must be called on every play because of the tragically short lifetime ... however, after the 
-				// they have actally been completely deleted - a reference to gainLevelNode, for example, still returns [object AudioGainNode] 
-				// Also have to set all of their state values since they all get forgotten, too!!
 
+				// Called after the ALLOW button is pressed to permit mic input
 				function gotAudio(stream) {
 					console.log("in gotAudio, audioContext is " + config.audioContext);
 					microphone = config.audioContext.createMediaStreamSource(stream);
 					console.log("in gotAudio,  microphone is "  + microphone);
+					//convertToMono( microphone ).connect(m_filterNode);
 					microphone.connect(m_filterNode);
 				}
 
-				var mediaGetter = navigator.getUserMedia || navigator.webkitGetUserMedia;
+				function error() {
+    				alert('Stream generation failed.');
+				}
+
+				//var mediaGetter = navigator.getUserMedia || navigator.webkitGetUserMedia;
 				m_noiseNode = noiseNodeFactory();
 
 				m_filterNode = config.audioContext.createBiquadFilter();
@@ -77,7 +78,13 @@ define(
 				gainLevelNode = config.audioContext.createGainNode();
 				gainLevelNode.gain.value = m_gainLevel;
 
-				mediaGetter({"audio": true}, gotAudio);
+				try{
+					//mediaGetter({audio:true}, gotAudio, error);
+					navigator.webkitGetUserMedia({audio:true}, gotAudio, error);
+				} catch(e){
+					alert('webkitGetUserMedia threw exception :' + e);
+				}
+
 
 				//======================================
 				// make the graph connections

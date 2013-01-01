@@ -21,3 +21,10 @@ Detailed examples of the usage of these methods may be found in the sliderBox ex
 You can also create your own sound models. For guidance, just look at any of the jsa-prefixed sound models.
 
 The code is distributed under the GNU Lesser General Public License 3.
+
+Notes
+-----------------
+Some of the sound models use microphone input. These models only work when run on a proper web web server (thought
+one on the localhost will work fine). Also, when the user opens one of these models, the ALLOW/DISALLOW buttons
+show up on the main browser window, not the sound model slider box window so it is easy to miss. If the user
+doesn't push the ALLOW button, the model will not work properly. 
