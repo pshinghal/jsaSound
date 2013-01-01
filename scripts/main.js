@@ -73,5 +73,6 @@ require(
 		makeSoundListSelector();
 
 		soundSelectorElem.addEventListener("change", soundChoice);
+
 	}
 );

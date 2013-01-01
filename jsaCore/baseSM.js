@@ -16,6 +16,7 @@ define(
 		return function () {
 			console.log("baseSM constructor called");
 			var params = {};
+			var paramname = []; // array of parameter names
 
 			var bsmInterface = {};
 
@@ -25,14 +26,26 @@ define(
 			// i_val = Object of values
 			// i_f = Function
 
-			// Parameters are over-writable
+			// Parameters are not over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
+				if (params.hasOwnProperty(i_name)) {
+					return;
+				}
 				var paramObject = {
 					"type": i_type,
 					"value": i_val,
 					"f": i_f
 				};
 				params[i_name] = paramObject;
+				paramname.push(i_name);
+			};
+
+			bsmInterface.getParamName = function (index) {
+				if (index < paramname.length){
+					return paramname[index];
+				} else {
+					return "";
+				}
 			};
 
 			bsmInterface.getParams = function () {

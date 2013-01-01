@@ -39,6 +39,7 @@ define(
 			// yep, this GUI has the same interface as a base sound model : play, release, and registerParam!
 
 			var params = i_sm.getParams();
+			console.log("in sliderbox, sm params has length " + utils.objLength(params) + ", and = " + params);
 			var numParams = utils.objLength(params);
 
 			var h = 40 + 100 * numParams; // more sliders, longer window
@@ -77,8 +78,9 @@ define(
 
 				// Store the min and max value of the parameters so that we can properly set the sliders from normalized control message values
 				// We dont need the default value or store a function to call - thus the two nulls
+				console.log("in sliderbox, registering interface param " + controllerElement);
 				myInterface.registerParam(
-					controllerElement,
+					controllerID, //controllerElement,
 					"range",
 					{
 						"min": paramObject.value.min,
@@ -87,6 +89,8 @@ define(
 					},
 					null
 				);
+				console.log("in sliderbox, interface now has  " + utils.objLength(myInterface.getParams()) + " registered elements" );
+
 			}
 
 			function setupUrlParameter(paramObject, paramName) {
@@ -175,13 +179,36 @@ define(
 
 		//FIND A NEW WAY TO DO THIS!!!
 			myInterface.setRangeParamNorm = function (i_pID, i_val) {
-				var p;
-				var plist = myInterface.getParamList();
-				if (i_pID < plist.length) {
+
+				var plist = myInterface.getParams();
+
+				if (i_pID >= utils.objLength(plist)) {
+					return;
+				}
+
+				var pname = myInterface.getParamName(i_pID);
+				var param = plist[pname];
+				var controllerElement = myWindow.document.getElementById(pname);
+				controllerElement.value = (param.value.min + i_val * (param.value.max - param.value.min));   // pfunc(pmin + i_Val * (pmax - pmin))
+				controllerElement.change();
+
+/*				var p;
+				var plist = myInterface.getParams();
+				var controllerElement; 
+
+				console.log("plist of length " + utils.objLength(plist) + " is " + plist);
+				if (i_pID < utils.objLength(plist)) {
+					p = plist[i_pID];
+					//controllerElement = myWindow.document.getElementById(controllerID);
+					controllerElement = myWindow.document.getElementById(p.name);
+					controllerElement.change();
+
+					console.log("i_pID is " + i_pID + ", and the val is " + i_val);
 					p = plist[i_pID];
 					p.name.value = (p.value.min + i_val * (p.value.max - p.value.min));   // pfunc(pmin + i_Val * (pmax - pmin)) // ... javascript makes me laugh
 					p.name.change(); // triggers the slider update
-				}
+*/
+
 			};
 
 			return myInterface;
