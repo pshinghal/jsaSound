@@ -40,6 +40,14 @@ define(
 				paramname.push(i_name);
 			};
 
+			bsmInterface.getNumParams = function(){
+				return paramname.length;
+			}
+
+			bsmInterface.getParamNames = function(){
+				return paramname;
+			}
+
 			bsmInterface.getParamName = function (index) {
 				if (index < paramname.length){
 					return paramname[index];
