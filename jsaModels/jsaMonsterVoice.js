@@ -19,8 +19,8 @@ define(
 
 			// defined outside "aswNoisyFMInterface" so that they can't be seen be the user of the sound models.
 			// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
-			var	m_jungleNode = new Jungle( config.audioContext ),
-				gainLevelNode = config.audioContext.createGainNode();
+			var	m_jungleNode, // = new Jungle( config.audioContext ),
+				gainLevelNode; // = config.audioContext.createGainNode();
 
 			var microphone;
 
@@ -71,7 +71,8 @@ define(
 
 			myInterface.release = function () {
 				now = config.audioContext.currentTime;
-				gainLevelNode.gain.setValueAtTime(0, now);
+				//gainLevelNode.gain.setValueAtTime(0, now);
+				gainLevelNode.gain.value = 0;
 
 			};
 				
