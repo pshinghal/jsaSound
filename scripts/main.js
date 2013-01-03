@@ -63,9 +63,7 @@ require(
 				["jsaSound/jsaModels/" + soundList[soundSelectorElem.selectedIndex].model],
 				// And open the sliderBox
 				function (currentSM) {
-					console.log("got model");
 					sb = makeSliderBox(currentSM());
-					console.log("made slider box");
 				}
 			);
 		}

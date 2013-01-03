@@ -65,6 +65,8 @@ define(
 			};
 
 			var myInterface = baseSM();
+			myInterface.setAboutText("This is a timing experiment ... in fact, it breaks after a while.")
+
 			myInterface.play = function (i_freq, i_gain) {
 				var now = config.audioContext.currentTime;
 				m_ephasor.setPhase(0.999999999);	// so that the phaser wraps to generate an event immediately after starting

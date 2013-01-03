@@ -7,52 +7,16 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-/* #INCLUDE
-jsaComponents/jsaAudioComponents.js
-	for baseSM and fmodOscFactory
-	
-jsaUtils/utils.js
-	for Array.prototype.prettyString 
-		*/
-
-/* The Audio Stuff
-
- refs:
-	http://stuartmemo.com/making-sine-square-sawtooth-and-triangle-waves/
-	JSyn's Phil Burke:
-		http://www.softsynth.com/webaudio/gainramp.php
-	Google's evangelist Chis Wilson's examples:
-		http://webaudio-io2012.appspot.com/js/examples.js
-			function playOsc(type) 
-
- --------------------------------------------------------------
-  The idea here, besides learning and experimenting with Web Audio capabilities, is to 
-  come up with an architecture that looks like a "sound model" - exposing an interface
-  and hiding stuff a model user shouldn't see or change. All using the particular "good parts"
-  of javascript.
-  
- --------------------------------------------------------------
-// Notes: 
-	Uses new audioContext.createOscillator();
-
-// Weirdness
-	- "smoothing" that creates frequency glide - built in default behavior, not coded by me.
-	- The two oscilators don't start at the same time (if the previous decay has finished and sound Node architecture must be rebuilt)
-	- Attack is not ramped - jumps from starting value to target value at target time. 
-	- Decay is ramped, but starting value doesn't seem to be the "current" value" - there is a little bump when the ramp starts. 
-	*/
 
 // ******************************************************************************************************
 // A "sound model" (which is essentially just an oscillator).
 // There is an attack time, a hold until release() is called, and a decay time.
-// The attack and decay have weirdnesses - I *think* I am doing it correctly, so I blame webaudio beta and Canary....
-// The attack and decaya
 // ******************************************************************************************************
 define(
 	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM"],
 	function (config, baseSM) {
 		return function () {
-			console.log("jsaOsc constructor called");
+			
 			// defined outside "oscInterface" so that they can't be seen be the user of the sound models.
 			// They are created here (before they are used) so that methods that set their parameters can be called without referencing undefined objects
 			var	oscNode = config.audioContext.createOscillator();
@@ -99,10 +63,10 @@ define(
 					buildModelArchitecture();
 					oscNode.noteOn(now);
 					gainEnvNode.gain.value = 0;
-				} else {  // no need to recreate architectre - the old one still exists since it is playing
-					//foo = (stopTime <= now);
-					//console.log("stopTime <= now)  === " + foo);
+				} else {  	// Already playing
+							// no need to recreate architectre - the old one still exists since it is playing
 					console.log(" ... NOT building architecure because stopTime (" + stopTime + " ) is greater than now (" + now + ")");
+					// Cancel any envelope events to start fresh
 					gainEnvNode.gain.cancelScheduledValues(now);
 				}
 				// The rest of the code is for new starts or restarts	
@@ -111,13 +75,10 @@ define(
 
 				// if no input, remember from last time set
 				oscNode.frequency.value = i_freq || m_frequency;
-				gainLevelNode.gain.value = i_gain || m_gainLevel;
 
-				// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
-				//foo = now + m_attackTime;
-				//console.log( "   ramp to level " + gainLevelNode.gain.value + " at time " + foo);
+
 				gainEnvNode.gain.setValueAtTime(0, now);
-				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs			
+				gainEnvNode.gain.linearRampToValueAtTime(1, now + m_attackTime); // go to gain level over .1 secs			
 			};
 
 			myInterface.registerParam(
@@ -134,6 +95,7 @@ define(
 				}
 			);
 
+ 
 			myInterface.registerParam(
 				"Gain",
 				"range",
@@ -147,6 +109,7 @@ define(
 					gainLevelNode.gain.value = m_gainLevel = i_val;
 				}
 			);
+
 
 			myInterface.registerParam(
 				"Attack Time",
@@ -178,16 +141,13 @@ define(
 			myInterface.release = function () {
 				now = config.audioContext.currentTime;
 				stopTime = now + m_releaseTime;
-				//console.log("RELEASE! time = " + now + ", and stopTime = " + stopTime);
-				//console.log("------------");
 
-				// linear ramp decay seems fine!  
+				gainEnvNode.gain.cancelScheduledValues(now);
+				gainEnvNode.gain.linearRampToValueAtTime(gainEnvNode.gain.value, now);
 				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
 				oscNode.noteOff(stopTime);
 			};
 
-			//console.log("paramlist = " + myInterface.getParamList().prettyString());
-			console.log("returning jsaOsc SM");
 			return myInterface;
 		};
 	}

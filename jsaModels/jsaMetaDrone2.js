@@ -7,30 +7,16 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-/* #INCLUDE
-jsaComponents/jsaAudioComponents.js
-	for baseSM and fmodOscFactory
-
-filteredNoiseBand.js
-	for jsaFilteredNoiseBandFactory()
-	
-jsaUtils/utils.js
-	for Array.prototype.prettyString 
-*/
 
 /* --------------------------------------------------------------
 	This drone model was inspired by a Matt Diamond post to the public-audio@w3.org list.
 	
 	The idea here is to have one sound model control a bunch of others.
 	Architecture:
-		MetaDrone1 has an array of noisyFM soundmodles that it starts, stops, and controls through paramters. 
+		MetaDrone1 has an array of other soundmodles that it starts, stops, and controls through paramters. 
 ******************************************************************************************************
 */
-//PARA: config
-//		-audioContext
-//		-bigNum
-//PARA: utils
-//		-mtof
+
 define(
 	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaCore/utils", "jsaSound/jsaModels/jsaFilteredNoiseBand"],
 	function (config, baseSM, utils, jsaFilteredNoiseBandFactory) {
@@ -75,10 +61,10 @@ define(
 				var i;
 				now = config.audioContext.currentTime;
 				stopTime = config.bigNum;
-				console.log("Drone: PLAY! time = " + now);
+				//console.log("Drone: PLAY! time = " + now);
 
 				m_baseNote = i_bn || m_baseNote;
-				console.log("will send play to " + m_currentNumChildrenActive + " currently active children");
+				//console.log("will send play to " + m_currentNumChildrenActive + " currently active children");
 				for (i = 0; i < m_currentNumChildrenActive; i += 1) {
 					childModel[i].play(note2Freq(m_baseNote));
 				}
@@ -88,13 +74,13 @@ define(
 				var i;
 				now = config.audioContext.currentTime;
 				stopTime = now;
-				console.log("RELEASE! time = " + now + ", and stopTime = " + stopTime);
-				console.log("will send release to " + m_currentNumChildrenActive + " currently active children");
+				//console.log("RELEASE! time = " + now + ", and stopTime = " + stopTime);
+				//console.log("will send release to " + m_currentNumChildrenActive + " currently active children");
 				for (i = 0; i < m_currentNumChildrenActive; i += 1) {
 					childModel[i].release();
 				}
 
-				console.log("------------[released]");
+				//console.log("------------[released]");
 			};
 
 			// ----------------------------------------
@@ -116,7 +102,7 @@ define(
 					}
 
 					var bndif = in_bn - m_baseNote;
-					console.log("will send new base note to " + m_currentNumChildrenActive + " currently active children");
+					//console.log("will send new base note to " + m_currentNumChildrenActive + " currently active children");
 					for (i = 0; i < m_currentNumChildrenActive; i += 1) {
 						//childModel[i].setCenterFreq(note2Freq(m_baseNote));  // reassign freqs
 						childModel[i].set("Center Frequency", childModel[i].getFreq() * Math.pow(2, bndif / 12));  // glide freqs
@@ -142,19 +128,19 @@ define(
 
 					if (in_gens > m_currentNumChildrenActive) {
 						for (i = m_currentNumChildrenActive; i < in_gens; i += 1) {
-							console.log("setNumGenerators: will add child to playing list # " + i);
+							//console.log("setNumGenerators: will add child to playing list # " + i);
 							var f = note2Freq(m_baseNote);
 							childModel[i].set("Gain", m_metagain);
 							childModel[i].play(f);
 						}
 					} else { // in_gens < m_currentNumChildrenActive
 						for (i = in_gens; i < m_currentNumChildrenActive; i += 1) {
-							console.log("setNumGenerators: will remove child from playing list # " + i);
+							//console.log("setNumGenerators: will remove child from playing list # " + i);
 							childModel[i].release();
 						}
 					}
 					m_currentNumChildrenActive = in_gens;
-					console.log("setNumGenerators: EXITING  after setting m_currentNumChildrenActive (" + m_currentNumChildrenActive + ") to in_gens (" + in_gens + ")");
+					//console.log("setNumGenerators: EXITING  after setting m_currentNumChildrenActive (" + m_currentNumChildrenActive + ") to in_gens (" + in_gens + ")");
 				}
 			);
 

@@ -39,14 +39,22 @@ define(
 			// yep, this GUI has the same interface as a base sound model : play, release, and registerParam!
 
 			var params = i_sm.getParams();
-			console.log("in sliderbox, sm params has length " + utils.objLength(params) + ", and = " + params);
+			//console.log("in sliderbox, sm params has length " + utils.objLength(params) + ", and = " + params);
 			var numParams = utils.objLength(params);
 
-			var h = 40 + 100 * numParams; // more sliders, longer window
+			var h = 40 + 70 * numParams; // more sliders, longer window
 
 			// Do it all in a new window
 			// close the old and create a new window each time this method is called.
 			var myWindow = {};
+			myWindow = window.open('', '', "width = 400,height = " + (h+25));
+			myWindow.document.write("<link href=\"css/sliderBox.css\" rel=\"stylesheet\" type=\"text/css\">");
+			myWindow.document.title = "jsaSound Parameter Slider Box";
+			if (i_sm.getAboutText() != ""){
+				myWindow.document.write("<div id=\"aboutTextID\"></div>");  //so it can be styled
+				myWindow.document.getElementById("aboutTextID").innerHTML =i_sm.getAboutText();
+			}
+
 
 			function setupRangeParameter(paramObject, paramName) {
 				// Fit value into the min-max range
@@ -78,7 +86,7 @@ define(
 
 				// Store the min and max value of the parameters so that we can properly set the sliders from normalized control message values
 				// We dont need the default value or store a function to call - thus the two nulls
-				console.log("in sliderbox, registering interface param " + controllerElement);
+				//console.log("in sliderbox, registering interface param " + controllerElement);
 				myInterface.registerParam(
 					controllerID, //controllerElement,
 					"range",
@@ -89,7 +97,7 @@ define(
 					},
 					null
 				);
-				console.log("in sliderbox, interface now has  " + utils.objLength(myInterface.getParams()) + " registered elements" );
+				//console.log("in sliderbox, interface now has  " + utils.objLength(myInterface.getParams()) + " registered elements" );
 
 			}
 
@@ -112,7 +120,7 @@ define(
 			}
 
 			function setupParameter(paramObject, paramName) {
-				myWindow.document.write(" <p> " + paramName + "</p> ");
+				myWindow.document.write(" <div  class = \"paramName\" > " + paramName + "</div> ");
 				// create IDs to be used for change listener callbacks removing spaces in multi - word names
 				//TODO LOW: This 'reduction' of the name can create issues:
 				controllerID = paramName.replace(/\s+/g, '') + "_controllerID";
@@ -130,9 +138,7 @@ define(
 				}
 			}
 
-			myWindow = window.open('', '', "width = 500,height = " + h);
-			myWindow.document.title = "Lonce\'s Funky Parameter Slider Box";
-			myWindow.document.write("Open developer tools console window to see \"play\" times. <br>");
+
 			// Create the Play button
 			myWindow.document.write(" <input id = \"playbutton_ID\" type = \"button\" value = \"Play\" /> ");
 			// Play button callback
@@ -177,9 +183,8 @@ define(
 				myWindow.document.getElementById("playbutton_ID").click();
 			};
 
-		//FIND A NEW WAY TO DO THIS!!!
+			// override the baseSM interface method to set params by moving sliders on the slider box 
 			myInterface.setRangeParamNorm = function (i_pID, i_val) {
-
 				var plist = myInterface.getParams();
 
 				if (i_pID >= utils.objLength(plist)) {
@@ -191,24 +196,6 @@ define(
 				var controllerElement = myWindow.document.getElementById(pname);
 				controllerElement.value = (param.value.min + i_val * (param.value.max - param.value.min));   // pfunc(pmin + i_Val * (pmax - pmin))
 				controllerElement.change();
-
-/*				var p;
-				var plist = myInterface.getParams();
-				var controllerElement; 
-
-				console.log("plist of length " + utils.objLength(plist) + " is " + plist);
-				if (i_pID < utils.objLength(plist)) {
-					p = plist[i_pID];
-					//controllerElement = myWindow.document.getElementById(controllerID);
-					controllerElement = myWindow.document.getElementById(p.name);
-					controllerElement.change();
-
-					console.log("i_pID is " + i_pID + ", and the val is " + i_val);
-					p = plist[i_pID];
-					p.name.value = (p.value.min + i_val * (p.value.max - p.value.min));   // pfunc(pmin + i_Val * (pmax - pmin)) // ... javascript makes me laugh
-					p.name.change(); // triggers the slider update
-*/
-
 			};
 
 			return myInterface;

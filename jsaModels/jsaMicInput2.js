@@ -77,6 +77,8 @@ define(
 			}());
 
 			var myInterface = baseSM();
+			myInterface.setAboutText("NOTE: Runs in Canary only, and only on a proper web server. Also, you must click the ALLOW button on Main Browser Window before playing. <br>")
+
 
 			myInterface.play = function (i_freq, i_gain) {
 				now = config.audioContext.currentTime;
@@ -167,11 +169,15 @@ define(
 				now = config.audioContext.currentTime;
 
 				// shouldn't need this line, but for long sustain times, the system seems to "forget" what its current value is....
+				/*
 				if (stopTime > now) { // only do this if we are currently playing
 					gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now);
 				}
+				*/
 				// set new stoptime
 				stopTime = now + m_releaseTime;
+				gainEnvNode.gain.cancelScheduledValues(now);
+				gainEnvNode.gain.linearRampToValueAtTime(gainEnvNode.gain.value, now);
 				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
 			};
 			//--------------------------------------------------------------------------------

@@ -157,6 +157,8 @@ define(
 				now = config.audioContext.currentTime;
 				stopTime = now + m_releaseTime;
 
+				gainEnvNode.gain.cancelScheduledValues(now);
+				gainEnvNode.gain.linearRampToValueAtTime(gainEnvNode.gain.value, now);
 				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
 				sourceNode.noteOff(stopTime);
 				architectureBuilt = false; //probably

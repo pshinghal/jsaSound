@@ -89,9 +89,6 @@ define(
 				myInterface.set("Center Frequency", m_freq);
 				gainLevelNode.gain.value = i_gain || m_gainLevel;
 
-				// linear ramp attack isn't working for some reason (Canary). It just sets value at the time specified (and thus feels like a laggy response time).
-				//var foo = now + m_attackTime;
-				//console.log( " ramp to level " + gainLevelNode.gain.value + " at time " + foo);
 				gainEnvNode.gain.setValueAtTime(0, now);
 				gainEnvNode.gain.linearRampToValueAtTime(gainLevelNode.gain.value, now + m_attackTime); // go to gain level over .1 secs
 			};
@@ -171,7 +168,11 @@ define(
 			myInterface.release = function () {
 				now = config.audioContext.currentTime;
 				stopTime = now + m_releaseTime;
+
+				gainEnvNode.gain.cancelScheduledValues(now);
+				gainEnvNode.gain.linearRampToValueAtTime(gainEnvNode.gain.value, now);
 				gainEnvNode.gain.linearRampToValueAtTime(0, stopTime);
+
 			};
 			//--------------------------------------------------------------------------------
 			// Other methods for the interface
@@ -179,8 +180,7 @@ define(
 			myInterface.getFreq = function () {
 				return m_freq;
 			};
-
-			//console.log("paramlist = " + myInterface.getParamList().prettyString());					
+				
 			return myInterface;
 		};
 	}

@@ -14,17 +14,17 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 define(
 	function () {
 		return function () {
-			console.log("baseSM constructor called");
+			var aboutText = "";
 			var params = {};
 			var paramname = []; // array of parameter names
 
 			var bsmInterface = {};
 
-			// This cannot be "private" because the inhereters need it - too bad it cannot be hidden from the users!!
-			// i_name = String
-			// i_type = String
-			// i_val = Object of values
-			// i_f = Function
+			bsmInterface.setAboutText = function (i_text){
+				aboutText=i_text;
+			}
+
+			bsmInterface.getAboutText = function () { return aboutText;}
 
 			// Parameters are not over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {

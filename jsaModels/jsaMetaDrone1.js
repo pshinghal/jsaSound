@@ -7,16 +7,7 @@ This library is free software; you can redistribute it and/or modify it under th
 This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
 You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
 ------------------------------------------------------------------------------------------*/
-/* #INCLUDE
-jsaComponents/jsaAudioComponents.js
-    for baseSM and fmodOscFactory
 
-noisyFM.js
-	for noisyFMFactory()
-	
-jsaUtils/utils.js
-	for Array.prototype.prettyString 
-*/
 
 /* --------------------------------------------------------------
 	This drone model was inspired by a Matt Diamond post to the public-audio@w3.org list.
@@ -26,11 +17,7 @@ jsaUtils/utils.js
 		MetaDrone1 has an array of noisyFM soundmodles that it starts, stops, and controls through paramters. 
 ******************************************************************************************************
 */
-//PARA: utils
-//		-mtof
-//PARA: config
-//		-audioContext
-//		-bigNum
+
 define(
 	["jsaSound/jsaCore/config", "jsaSound/jsaCore/baseSM", "jsaSound/jsaModels/jsaNoisyFM", "jsaSound/jsaCore/utils"],
 	function (config, baseSM, jsaNoisyFMFactory, utils) {
