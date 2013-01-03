@@ -42,12 +42,12 @@ define(
 			//console.log("in sliderbox, sm params has length " + utils.objLength(params) + ", and = " + params);
 			var numParams = utils.objLength(params);
 
-			var h = 40 + 70 * numParams; // more sliders, longer window
+			var h = 100 + 70 * numParams; // more sliders, longer window
 
 			// Do it all in a new window
 			// close the old and create a new window each time this method is called.
 			var myWindow = {};
-			myWindow = window.open('', '', "width = 400,height = " + (h+25));
+			myWindow = window.open('', '', "width = 400,height = " + h);
 			myWindow.document.write("<link href=\"css/sliderBox.css\" rel=\"stylesheet\" type=\"text/css\">");
 			myWindow.document.title = "jsaSound Parameter Slider Box";
 			if (i_sm.getAboutText() != ""){
