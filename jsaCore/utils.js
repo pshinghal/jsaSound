@@ -91,6 +91,10 @@ define(
 			return count;
 		};
 
+		utils.isInteger = function(n){
+			return n===+n && n===(n|0);
+		};
+
 		return utils;
 	}
 );

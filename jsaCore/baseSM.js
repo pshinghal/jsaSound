@@ -12,7 +12,8 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 // The sound model base class that all models use as a prototype
 //==============================================================================
 define(
-	function () {
+	["jsaSound/jsaCore/utils"],
+	function (utils) {
 		return function () {
 			var aboutText = "";
 			var params = {};
@@ -22,9 +23,9 @@ define(
 
 			bsmInterface.setAboutText = function (i_text){
 				aboutText=i_text;
-			}
+			};
 
-			bsmInterface.getAboutText = function () { return aboutText;}
+			bsmInterface.getAboutText = function () { return aboutText;};
 
 			// Parameters are not over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
@@ -42,11 +43,11 @@ define(
 
 			bsmInterface.getNumParams = function(){
 				return paramname.length;
-			}
+			};
 
 			bsmInterface.getParamNames = function(){
 				return paramname;
-			}
+			};
 
 			bsmInterface.getParamName = function (index) {
 				if (index < paramname.length){
@@ -59,8 +60,13 @@ define(
 			bsmInterface.getParams = function () {
 				return params;
 			};
+					
 
 			bsmInterface.setRangeParamNorm = function (i_name, i_val) {
+				if (utils.isInteger(i_name)) {  // "overload" function to accept integer indexes in to parameter list, too.
+					i_name=bsmInterface.getParamNames()[i_name];
+				}
+				
 				if (!params[i_name]) {
 					throw "setRangeParamNorm: Parameter " + i_name + " does not exist";
 				}
@@ -69,6 +75,10 @@ define(
 			};
 
 			bsmInterface.set = function (i_name) {
+				if (utils.isInteger(i_name)) {  // "overload" function to accept integer indexes in to parameter list, too.
+					i_name=bsmInterface.getParamNames()[i_name];
+				}
+
 				if (!params[i_name]) {
 					throw "set: Parameter " + i_name + " does not exist";
 				}
@@ -81,13 +91,13 @@ define(
 
 			// All sound models need to have these methods
 			bsmInterface.play = function () {
-				console.log("baseSM.play() should probably be overriden ");
+				console.log("baseSM.play() should probably be overridden ");
 			};
 			bsmInterface.release = function () {
-				console.log("baseSM.release() should probably be overriden ");
+				console.log("baseSM.release() should probably be overridden ");
 			};
 			bsmInterface.stop = function () {
-				console.log("baseSM.stop() should probably be overriden ");
+				console.log("baseSM.stop() should probably be overridden ");
 			};
 			return bsmInterface;
 		};

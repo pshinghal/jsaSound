@@ -51,6 +51,7 @@ define(
 
 				stopTime = config.bigNum;
 
+				console.log("play Monster with igain = "+ i_gain + ", and m_gainLevel = " + m_gainLevel);
 				gainLevelNode.gain.value = i_gain || m_gainLevel;
 			};
 
@@ -64,15 +65,21 @@ define(
 					"val": m_gainLevel
 				},
 				function (i_val) {
-					gainLevelNode.gain.value = m_gainLevel = i_val;
+					m_gainLevel = i_val;
+					now = config.audioContext.currentTime;
+					if (stopTime > now)  { // if playing
+						gainLevelNode.gain.value = m_gainLevel = i_val;
+					}
 				}
 			);
 
 
 			myInterface.release = function () {
 				now = config.audioContext.currentTime;
+				stopTime = now;
 				//gainLevelNode.gain.setValueAtTime(0, now);
 				gainLevelNode.gain.value = 0;
+				console.log("releasing Monster setting gain to = "+ gainLevelNode.gain.value);
 
 			};
 				

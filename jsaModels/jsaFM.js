@@ -56,7 +56,6 @@ define(
 			};
 
 			var myInterface = baseSM();
-
 			myInterface.setAboutText("This is a simple frequency modulator with a-rate updates of the carrier frequency.")
 
 			myInterface.play = function (i_freq, i_gain) {
