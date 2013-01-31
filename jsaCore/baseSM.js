@@ -21,11 +21,11 @@ define(
 
 			var bsmInterface = {};
 
-			bsmInterface.setAboutText = function (i_text){
-				aboutText=i_text;
+			bsmInterface.setAboutText = function (i_text) {
+				aboutText = i_text;
 			};
 
-			bsmInterface.getAboutText = function () { return aboutText;};
+			bsmInterface.getAboutText = function () { return aboutText; };
 
 			// Parameters are not over-writable
 			bsmInterface.registerParam = function (i_name, i_type, i_val, i_f) {
@@ -37,20 +37,22 @@ define(
 					"value": i_val,
 					"f": i_f
 				};
+				console.log("Registered Param " +  i_name + " of " + bsmInterface.getAboutText() +  " at " + paramname.length);
+				console.log(paramObject);
 				params[i_name] = paramObject;
 				paramname.push(i_name);
 			};
 
-			bsmInterface.getNumParams = function(){
+			bsmInterface.getNumParams = function () {
 				return paramname.length;
 			};
 
-			bsmInterface.getParamNames = function(){
+			bsmInterface.getParamNames = function () {
 				return paramname;
 			};
 
 			bsmInterface.getParamName = function (index) {
-				if (index < paramname.length){
+				if (index < paramname.length) {
 					return paramname[index];
 				} else {
 					return "";
@@ -60,23 +62,33 @@ define(
 			bsmInterface.getParams = function () {
 				return params;
 			};
-					
 
+			//This message may help a lot in the future: OVERRIDDEN IN SLIDERBOX!
 			bsmInterface.setRangeParamNorm = function (i_name, i_val) {
+				// console.log("Got name " + i_name + " with value:");
+				// console.log(i_val);
 				if (utils.isInteger(i_name)) {  // "overload" function to accept integer indexes in to parameter list, too.
-					i_name=bsmInterface.getParamNames()[i_name];
+					i_name = bsmInterface.getParamNames()[i_name];
+					// console.log("Changed name to: " + i_name);
 				}
-				
+
+				// console.log("Listing Params: ");
+				// console.log(params);
+
 				if (!params[i_name]) {
 					throw "setRangeParamNorm: Parameter " + i_name + " does not exist";
 				}
 				var p = params[i_name];
+				// console.log("Printing p:");
+				// console.log(p);
 				p.f(p.value.min + i_val * (p.value.max - p.value.min));
 			};
 
+			bsmInterface.setParamNorm = bsmInterface.setRangeParamNorm;
+
 			bsmInterface.set = function (i_name) {
 				if (utils.isInteger(i_name)) {  // "overload" function to accept integer indexes in to parameter list, too.
-					i_name=bsmInterface.getParamNames()[i_name];
+					i_name = bsmInterface.getParamNames()[i_name];
 				}
 
 				if (!params[i_name]) {

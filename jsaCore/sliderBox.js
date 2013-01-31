@@ -50,9 +50,9 @@ define(
 			myWindow = window.open('', '', "width = 400,height = " + h);
 			myWindow.document.write("<link href=\"css/sliderBox.css\" rel=\"stylesheet\" type=\"text/css\">");
 			myWindow.document.title = "jsaSound Parameter Slider Box";
-			if (i_sm.getAboutText() != ""){
+			if (i_sm.getAboutText() !== "") {
 				myWindow.document.write("<div id=\"aboutTextID\"></div>");  //so it can be styled
-				myWindow.document.getElementById("aboutTextID").innerHTML =i_sm.getAboutText();
+				myWindow.document.getElementById("aboutTextID").innerHTML = i_sm.getAboutText();
 			}
 
 
@@ -95,6 +95,7 @@ define(
 						"max": paramObject.value.max,
 						"val": null
 					},
+					//TODO: this is bloody confusing. Why was this initially "null"??
 					null
 				);
 				//console.log("in sliderbox, interface now has  " + utils.objLength(myInterface.getParams()) + " registered elements" );
@@ -183,20 +184,28 @@ define(
 				myWindow.document.getElementById("playbutton_ID").click();
 			};
 
-			// override the baseSM interface method to set params by moving sliders on the slider box 
-			myInterface.setRangeParamNorm = function (i_pID, i_val) {
-				var plist = myInterface.getParams();
+			// override the baseSM interface method to set params by moving sliders on the slider box
+			myInterface.setRangeParamNorm = function (i_name, i_val) {
+				var paramName, paramList, paramObject;
+				if (utils.isInteger(i_name)) {
+					paramName = myInterface.getParamName(i_name);
+				} else {
+					paramName = i_name.replace(/\s+/g, '') + "_controllerID";
+				}
 
-				if (i_pID >= utils.objLength(plist)) {
+				paramList = myInterface.getParams();
+
+				if (!paramList[paramName]) {
 					return;
 				}
 
-				var pname = myInterface.getParamName(i_pID);
-				var param = plist[pname];
-				var controllerElement = myWindow.document.getElementById(pname);
-				controllerElement.value = (param.value.min + i_val * (param.value.max - param.value.min));   // pfunc(pmin + i_Val * (pmax - pmin))
+				paramObject = paramList[paramName];
+				var controllerElement = myWindow.document.getElementById(paramName);
+				controllerElement.value = (paramObject.value.min + i_val * (paramObject.value.max - paramObject.value.min));   // pfunc(pmin + i_Val * (pmax - pmin))
 				controllerElement.change();
 			};
+
+			myInterface.setParamNorm = myInterface.setRangeParamNorm;
 
 			return myInterface;
 		};
