@@ -37,8 +37,8 @@ define(
 					"value": i_val,
 					"f": i_f
 				};
-				console.log("Registered Param " +  i_name + " of " + bsmInterface.getAboutText() +  " at " + paramname.length);
-				console.log(paramObject);
+				// console.log("Registered Param " +  i_name + " of " + bsmInterface.getAboutText() +  " at " + paramname.length);
+				// console.log(paramObject);
 				params[i_name] = paramObject;
 				paramname.push(i_name);
 			};
