@@ -29,7 +29,7 @@ define(
 				stopTime = 0.0,	// will be > audioContext.currentTime if playing
 				now = 0.0;
 
-			// (Re)create the nodes and thier connections.
+			// (Re)create the nodes and their connections.
 			var buildModelArchitecture = (function () {
 
 				m_jungleNode = new Jungle( config.audioContext );
